@@ -1,0 +1,14 @@
+/* ScrollToTop Component Styles */
+
+.scroll-to-top {
+  @apply fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full 
+         bg-gray-900 text-white shadow-lg shadow-gray-900/25
+         flex items-center justify-center
+         hover:bg-gray-800 hover:scale-110 
+         transition-all duration-300
+         border border-gray-700;
+}
+
+.scroll-to-top-icon {
+  @apply w-5 h-5;
+}

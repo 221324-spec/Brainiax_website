@@ -1,0 +1,168 @@
+/* Team Component Styles */
+
+.team {
+  @apply relative py-24 overflow-hidden bg-[#f8f7f4];
+}
+
+.team-container {
+  @apply max-w-7xl mx-auto px-6 lg:px-8;
+}
+
+/* Section Header */
+.team-header {
+  @apply text-center max-w-3xl mx-auto mb-14;
+}
+
+.team-label {
+  @apply text-sm md:text-base font-semibold uppercase tracking-wider text-gray-500 mb-5;
+}
+
+.team-title {
+  @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-4;
+}
+
+.team-title-accent {
+  @apply text-gray-500;
+}
+
+.team-description {
+  @apply text-gray-500 text-base max-w-2xl mx-auto;
+}
+
+/* Leadership Grid */
+.team-leadership-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-8 max-w-4xl mx-auto;
+}
+
+/* Team Grid */
+.team-members-grid {
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6;
+}
+
+/* Team Card */
+.team-card {
+  @apply relative h-full bg-white rounded-2xl border border-gray-200 overflow-hidden
+         hover:border-gray-300 hover:shadow-lg transition-all duration-500
+         hover:transform hover:-translate-y-2;
+}
+
+/* Card Image Container */
+.team-card-image {
+  @apply relative aspect-square overflow-hidden bg-gray-100;
+}
+
+.team-card-image-gradient {
+  @apply absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent 
+         opacity-60 z-10;
+}
+
+.team-card-image-shine {
+  @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent
+         -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out z-20;
+}
+
+.team-card-img {
+  @apply w-full h-full object-cover object-center absolute inset-0
+         group-hover:scale-110 transition-transform duration-700 ease-out;
+}
+
+.team-card-fallback {
+  @apply w-full h-full bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300
+         flex items-center justify-center absolute inset-0;
+}
+
+.team-card-initials {
+  @apply text-6xl md:text-7xl font-bold text-gray-400/50 
+         group-hover:text-gray-500/60 transition-colors duration-500;
+}
+
+.team-card-glow {
+  @apply absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10;
+}
+
+.team-card-glow-inner {
+  @apply absolute inset-0 bg-gradient-to-t from-gray-900/10 to-transparent;
+}
+
+/* Social Links */
+.team-card-socials {
+  @apply absolute top-4 right-4 z-30 flex flex-col gap-2
+         opacity-0 group-hover:opacity-100 
+         translate-y-4 group-hover:translate-y-0
+         transition-all duration-500 delay-100;
+}
+
+.team-card-social-link {
+  @apply w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm border border-gray-200 
+         flex items-center justify-center text-gray-600
+         hover:bg-gray-900 hover:border-gray-900 hover:text-white
+         transition-all duration-300 transform hover:scale-110;
+}
+
+.team-card-social-icon {
+  @apply w-4 h-4;
+}
+
+/* Leadership Badge */
+.team-card-badge {
+  @apply absolute top-4 left-4 z-30;
+}
+
+.team-card-badge-inner {
+  @apply px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider
+         bg-gray-900 text-white rounded-lg shadow-lg;
+}
+
+/* Card Content */
+.team-card-content {
+  @apply p-6 relative;
+}
+
+.team-card-line {
+  @apply absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent
+         scale-x-0 group-hover:scale-x-100 transition-transform duration-500;
+}
+
+.team-card-name {
+  @apply text-xl font-semibold text-gray-900 mb-1 
+         group-hover:text-gray-600 transition-colors duration-300;
+}
+
+.team-card-title {
+  @apply text-base text-gray-500 group-hover:text-gray-600 transition-colors duration-300;
+}
+
+/* Bottom Accent */
+.team-card-accent {
+  @apply absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-gray-800 to-gray-900
+         transform scale-x-0 group-hover:scale-x-100 
+         transition-transform duration-500 origin-left;
+}
+
+/* Bottom Section */
+.team-bottom {
+  @apply mt-16 text-center;
+}
+
+.team-bottom-badge {
+  @apply inline-flex items-center gap-4 px-6 py-3 bg-white rounded-full border border-gray-200 shadow-sm;
+}
+
+.team-bottom-dot {
+  @apply w-2 h-2 rounded-full bg-gray-900;
+}
+
+.team-bottom-text {
+  @apply text-base text-gray-600;
+}
+
+/* Background Decorative */
+.team-bg-decor-1 {
+  @apply absolute top-1/3 left-0 w-80 h-80 bg-primary-500/5 rounded-full 
+         blur-[150px] pointer-events-none;
+}
+
+.team-bg-decor-2 {
+  @apply absolute bottom-1/4 right-0 w-64 h-64 bg-primary-500/5 rounded-full 
+         blur-[120px] pointer-events-none;
+}

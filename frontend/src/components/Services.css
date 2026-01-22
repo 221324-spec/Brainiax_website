@@ -1,0 +1,117 @@
+/* Services Component Styles */
+
+.services {
+  @apply relative py-24 overflow-hidden bg-white;
+}
+
+.services-container {
+  @apply max-w-7xl mx-auto px-6 lg:px-8;
+}
+
+/* Section Header */
+.services-header {
+  @apply text-center max-w-3xl mx-auto mb-20;
+}
+
+.services-label {
+  @apply text-sm md:text-base font-semibold uppercase tracking-wider text-gray-500 mb-6;
+}
+
+.services-title {
+  @apply text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6;
+}
+
+.services-title-accent {
+  @apply block text-gray-500;
+}
+
+.services-description {
+  @apply text-xl text-gray-500 max-w-2xl mx-auto;
+}
+
+/* Services Grid */
+.services-grid {
+  @apply grid md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.services-card-wrapper {
+  /* Default wrapper */
+}
+
+.services-card-wrapper-wide {
+  @apply md:col-span-2 lg:col-span-1;
+}
+
+/* Service Card */
+.services-card {
+  @apply h-full p-8 relative overflow-hidden bg-[#f8f7f4] rounded-2xl
+         border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all duration-300;
+}
+
+.services-card-content {
+  @apply relative z-10;
+}
+
+/* Icon */
+.services-card-icon-wrapper {
+  @apply w-14 h-14 rounded-xl bg-gray-900 flex items-center justify-center mb-6 
+         group-hover:scale-110 transition-transform duration-300;
+}
+
+.services-card-icon {
+  @apply w-7 h-7 text-white;
+}
+
+/* Title */
+.services-card-title {
+  @apply text-2xl font-semibold text-gray-900 mb-4 flex items-center gap-2;
+}
+
+.services-card-arrow {
+  @apply w-5 h-5 opacity-0 -translate-y-1 translate-x-1
+         group-hover:opacity-100 group-hover:translate-y-0 
+         group-hover:translate-x-0 transition-all duration-300 text-gray-600;
+}
+
+/* Description */
+.services-card-description {
+  @apply text-gray-600 text-base mb-6 leading-relaxed;
+}
+
+/* Features */
+.services-card-features {
+  @apply flex flex-wrap gap-2;
+}
+
+.services-card-feature {
+  @apply px-3 py-1.5 text-sm font-medium text-gray-600
+         bg-white border border-gray-200 rounded-full;
+}
+
+/* Custom Solutions Card */
+.services-custom-card {
+  @apply h-full p-8 flex flex-col items-center justify-center 
+         text-center border-2 border-dashed border-gray-300 rounded-2xl bg-white;
+}
+
+.services-custom-icon-wrapper {
+  @apply w-16 h-16 rounded-full bg-gray-100 border border-gray-200
+         flex items-center justify-center mb-6;
+}
+
+.services-custom-icon {
+  @apply text-2xl text-gray-600;
+}
+
+.services-custom-title {
+  @apply text-xl font-semibold text-gray-900 mb-3;
+}
+
+.services-custom-description {
+  @apply text-gray-500 mb-6;
+}
+
+.services-custom-link {
+  @apply text-gray-900 hover:text-gray-600 font-medium 
+         transition-colors underline underline-offset-4;
+}

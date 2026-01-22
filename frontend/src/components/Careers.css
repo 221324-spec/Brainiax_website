@@ -1,0 +1,106 @@
+/* Careers Component Styles */
+
+.careers {
+  @apply relative py-24 overflow-hidden;
+}
+
+.careers-bg {
+  @apply absolute inset-0 bg-cover bg-center bg-no-repeat;
+}
+
+.careers-overlay {
+  @apply absolute inset-0 bg-white/85 backdrop-blur-[1px];
+}
+
+.careers-container {
+  @apply max-w-7xl mx-auto px-6 lg:px-8 relative z-10;
+}
+
+/* Section Header */
+.careers-header {
+  @apply text-center max-w-3xl mx-auto mb-12;
+}
+
+.careers-label {
+  @apply inline-flex items-center gap-2 px-4 py-2 mb-6
+         text-sm font-semibold uppercase tracking-wider text-green-600
+         bg-green-100 border border-green-200 rounded-full;
+}
+
+.careers-label-icon {
+  @apply w-4 h-4;
+}
+
+.careers-title {
+  @apply text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6;
+}
+
+.careers-title-accent {
+  @apply block text-gray-600;
+}
+
+.careers-description {
+  @apply text-xl text-gray-600 mx-auto;
+}
+
+/* Perks Grid */
+.careers-perks {
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12;
+}
+
+.careers-perk-card {
+  @apply bg-[#f8f7f4] border border-gray-200 rounded-2xl p-4 text-center
+         hover:shadow-lg transition-shadow duration-300;
+}
+
+.careers-perk-icon-wrapper {
+  @apply w-10 h-10 mx-auto mb-3 rounded-xl bg-gray-900 
+         flex items-center justify-center;
+}
+
+.careers-perk-icon {
+  @apply w-5 h-5 text-white;
+}
+
+.careers-perk-title {
+  @apply text-sm font-semibold text-gray-900 mb-1;
+}
+
+.careers-perk-description {
+  @apply text-xs text-gray-500;
+}
+
+/* CTA Card */
+.careers-cta-card {
+  @apply bg-[#f8f7f4] border border-gray-200 rounded-3xl p-10 text-center relative overflow-hidden;
+}
+
+.careers-cta-content {
+  @apply relative z-10;
+}
+
+.careers-cta-icon-wrapper {
+  @apply w-16 h-16 mx-auto mb-6 rounded-2xl bg-gray-900 
+         flex items-center justify-center;
+}
+
+.careers-cta-icon {
+  @apply w-8 h-8 text-white;
+}
+
+.careers-cta-title {
+  @apply text-3xl font-bold text-gray-900 mb-3;
+}
+
+.careers-cta-description {
+  @apply text-gray-600 mb-8 max-w-lg mx-auto text-lg;
+}
+
+.careers-cta-link {
+  @apply inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white 
+         font-semibold rounded-xl hover:bg-gray-800 transition-colors duration-300;
+}
+
+.careers-cta-link-icon {
+  @apply w-5 h-5 group-hover:translate-x-1 transition-transform;
+}

@@ -1,0 +1,120 @@
+/* CTA Component Styles */
+
+.cta {
+  @apply relative py-20 overflow-hidden bg-[#f8f7f4];
+}
+
+.cta-container {
+  @apply max-w-7xl mx-auto px-6 lg:px-8;
+}
+
+.cta-box {
+  @apply relative bg-white border border-gray-200 rounded-3xl p-12 lg:p-20 text-center overflow-hidden;
+}
+
+.cta-content {
+  @apply relative z-10;
+}
+
+/* Section Label */
+.cta-label {
+  @apply inline-flex items-center gap-2 px-3 py-1 mb-8
+         text-xs font-semibold uppercase tracking-wider text-gray-600
+         bg-gray-100 border border-gray-200 rounded-full;
+}
+
+/* Title */
+.cta-title {
+  @apply text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6;
+}
+
+.cta-title-accent {
+  @apply block text-gray-600 mt-2;
+}
+
+/* Description */
+.cta-description {
+  @apply text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed;
+}
+
+/* CTA Buttons */
+.cta-buttons {
+  @apply flex flex-col sm:flex-row gap-4 justify-center mb-12;
+}
+
+.cta-btn-primary {
+  @apply px-8 py-4 bg-gray-900 text-white font-semibold 
+         rounded-xl hover:bg-gray-800 transition-colors duration-300;
+}
+
+.cta-btn-primary-content {
+  @apply flex items-center gap-2;
+}
+
+.cta-btn-primary-icon {
+  @apply w-5 h-5;
+}
+
+.cta-btn-primary-arrow {
+  @apply w-5 h-5 group-hover:translate-x-1 transition-transform;
+}
+
+.cta-btn-secondary {
+  @apply px-8 py-4 bg-transparent text-gray-900 font-semibold 
+         border-2 border-gray-300 rounded-xl hover:border-gray-900 
+         transition-colors duration-300;
+}
+
+.cta-btn-secondary-content {
+  @apply flex items-center gap-2;
+}
+
+.cta-btn-secondary-icon {
+  @apply w-5 h-5;
+}
+
+/* Trust Indicators */
+.cta-trust {
+  @apply flex flex-wrap items-center justify-center gap-8 pt-10 
+         border-t border-gray-200;
+}
+
+.cta-trust-item {
+  @apply text-center;
+}
+
+.cta-trust-value {
+  @apply text-2xl font-bold text-gray-900;
+}
+
+.cta-trust-label {
+  @apply text-xs text-gray-500;
+}
+
+.cta-trust-divider {
+  @apply w-px h-10 bg-gray-200 hidden sm:block;
+}
+
+/* Social Links */
+.cta-social {
+  @apply mt-12 pt-8 border-t border-gray-200;
+}
+
+.cta-social-text {
+  @apply text-sm text-gray-500 mb-4;
+}
+
+.cta-social-links {
+  @apply flex items-center justify-center gap-3;
+}
+
+.cta-social-link {
+  @apply w-11 h-11 rounded-xl bg-gray-100 border border-gray-200 
+         flex items-center justify-center text-gray-600
+         hover:bg-gray-900 hover:border-gray-900 hover:text-white
+         transition-all duration-300 hover:-translate-y-1;
+}
+
+.cta-social-icon {
+  @apply w-5 h-5;
+}

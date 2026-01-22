@@ -1,0 +1,131 @@
+/* WhyChoose Component Styles */
+
+.why-choose {
+  @apply relative py-24 overflow-hidden bg-[#f8f7f4];
+}
+
+.why-choose-container {
+  @apply max-w-7xl mx-auto px-6 lg:px-8;
+}
+
+/* Section Header */
+.why-choose-header {
+  @apply text-center max-w-3xl mx-auto mb-20;
+}
+
+.why-choose-label {
+  @apply text-sm md:text-base font-semibold uppercase tracking-wider text-gray-500 mb-6;
+}
+
+.why-choose-title {
+  @apply text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6;
+}
+
+.why-choose-title-accent {
+  @apply block text-gray-500;
+}
+
+.why-choose-description {
+  @apply text-xl text-gray-500 max-w-2xl mx-auto;
+}
+
+/* Benefits Grid */
+.why-choose-grid {
+  @apply grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20;
+}
+
+/* Benefit Card */
+.why-choose-card {
+  @apply h-full p-8 bg-white rounded-2xl border border-gray-200 
+         hover:shadow-lg hover:border-gray-300 transition-all duration-300;
+}
+
+.why-choose-card-header {
+  @apply flex items-start justify-between mb-6;
+}
+
+.why-choose-card-icon-wrapper {
+  @apply w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center;
+}
+
+.why-choose-card-icon {
+  @apply w-7 h-7 text-gray-700;
+}
+
+.why-choose-card-stat {
+  @apply text-right;
+}
+
+.why-choose-card-stat-value {
+  @apply text-3xl font-bold text-gray-900;
+}
+
+.why-choose-card-stat-label {
+  @apply text-sm text-gray-500;
+}
+
+.why-choose-card-title {
+  @apply text-xl font-semibold text-gray-900 mb-3;
+}
+
+.why-choose-card-description {
+  @apply text-gray-500 text-base leading-relaxed;
+}
+
+/* Highlights Section */
+.why-choose-highlights {
+  @apply bg-white rounded-3xl border border-gray-200 p-10 lg:p-14 shadow-sm;
+}
+
+.why-choose-highlights-grid {
+  @apply grid lg:grid-cols-2 gap-12 items-center;
+}
+
+.why-choose-highlights-title {
+  @apply text-2xl lg:text-3xl font-semibold text-gray-900 mb-4;
+}
+
+.why-choose-highlights-description {
+  @apply text-gray-600 mb-8 leading-relaxed;
+}
+
+.why-choose-highlights-list {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+}
+
+.why-choose-highlight-item {
+  @apply flex items-center gap-3;
+}
+
+.why-choose-highlight-icon {
+  @apply w-5 h-5 text-gray-700 flex-shrink-0;
+}
+
+.why-choose-highlight-text {
+  @apply text-sm text-gray-600;
+}
+
+/* Metrics Cards */
+.why-choose-metrics {
+  @apply relative;
+}
+
+.why-choose-metrics-grid {
+  @apply grid grid-cols-2 gap-4;
+}
+
+.why-choose-metric-card {
+  @apply bg-gray-900 rounded-2xl p-6 text-center;
+}
+
+.why-choose-metric-card-offset {
+  @apply mt-8;
+}
+
+.why-choose-metric-value {
+  @apply text-4xl font-bold text-white mb-2;
+}
+
+.why-choose-metric-label {
+  @apply text-sm text-gray-400;
+}

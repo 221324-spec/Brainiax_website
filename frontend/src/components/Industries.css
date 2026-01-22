@@ -1,0 +1,79 @@
+/* Industries Component Styles */
+
+.industries {
+  @apply relative py-24 overflow-hidden bg-white;
+}
+
+.industries-container {
+  @apply max-w-7xl mx-auto px-6 lg:px-8;
+}
+
+/* Section Header */
+.industries-header {
+  @apply text-center max-w-3xl mx-auto mb-20;
+}
+
+.industries-label {
+  @apply text-sm md:text-base font-semibold uppercase tracking-wider text-gray-500 mb-6;
+}
+
+.industries-title {
+  @apply text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gray-900 mb-6;
+}
+
+.industries-title-accent {
+  @apply block text-gray-500;
+}
+
+.industries-description {
+  @apply text-xl text-gray-500 max-w-2xl mx-auto;
+}
+
+/* Industries Grid */
+.industries-grid {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6;
+}
+
+/* Industry Card */
+.industries-card {
+  @apply h-full p-6 text-center bg-[#f8f7f4] rounded-2xl border border-gray-200
+         hover:border-gray-300 hover:shadow-md transition-all duration-300;
+}
+
+.industries-card-icon-wrapper {
+  @apply inline-flex items-center justify-center w-16 h-16 mb-5
+         bg-white border border-gray-200 rounded-2xl
+         group-hover:bg-gray-900 group-hover:border-gray-900
+         transition-all duration-300;
+}
+
+.industries-card-icon {
+  @apply w-7 h-7 text-gray-600 group-hover:text-white 
+         transition-colors duration-300;
+}
+
+.industries-card-name {
+  @apply text-base font-semibold text-gray-900 mb-2;
+}
+
+.industries-card-description {
+  @apply text-sm text-gray-500 leading-relaxed;
+}
+
+/* Bottom CTA */
+.industries-cta {
+  @apply text-center mt-16;
+}
+
+.industries-cta-text {
+  @apply text-gray-500 text-lg mb-6;
+}
+
+.industries-cta-link {
+  @apply inline-flex items-center gap-2 text-gray-900 hover:text-gray-600 
+         font-medium transition-colors underline underline-offset-4;
+}
+
+.industries-cta-icon {
+  @apply w-5 h-5;
+}

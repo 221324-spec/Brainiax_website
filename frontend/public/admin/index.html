@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brainiax Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/admin/admin.css">
+  <style>
+    ::-webkit-scrollbar {
+      width: 2px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 1px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a1a1a1;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen" style="overflow: hidden;">
+  <!-- Admin panel content is identical to root public/admin version -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-shield-alt text-white text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+        <p class="text-gray-600 mt-2">Enter your admin token to continue</p>
+      </div>
+      <form onsubmit="handleLogin(event)">
+        <div class="mb-3">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Username (or leave blank to use token)</label>
+          <input type="text" id="adminUsername"
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="admin">
+        </div>
+        <div class="mb-3">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Password (or leave blank to use token)</label>
+          <input type="password" id="adminPassword"
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="password">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Admin Token (fallback)</label>
+          <input type="password" id="adminToken"
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="Or paste a token here">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">API URL</label>
+          <input type="text" id="apiUrl" value=""
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="Leave empty to use same origin (/api)">
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+          <i class="fas fa-sign-in-alt mr-2"></i> Login
+        </button>
+        <p id="loginError" class="text-red-500 text-sm mt-3 text-center hidden"></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <header class="bg-white shadow-sm border-b fixed top-0 left-0 right-0 z-10">
+      <div class="px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+            <i class="fas fa-chart-line text-white"></i>
+          </div>
+          <h1 class="text-xl font-bold text-gray-900">Brainiax Admin</h1>
+        </div>
+        <button onclick="logout()" class="text-gray-600 hover:text-gray-900 flex items-center gap-2">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <div class="py-6 pt-20">
+      <div class="px-4 grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl p-6 shadow-sm border">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">Active Jobs</p>
+              <p id="statActiveJobs" class="text-3xl font-bold text-gray-900">-</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <i class="fas fa-briefcase text-blue-600"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm border">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">Applications</p>
+              <p id="statResumes" class="text-3xl font-bold text-gray-900">-</p>
+            </div>
+            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <i class="fas fa-file-alt text-green-600"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm border">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">Contacts</p>
+              <p id="statContacts" class="text-3xl font-bold text-gray-900">-</p>
+            </div>
+            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <i class="fas fa-envelope text-purple-600"></i>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm border">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-gray-500 text-sm">New Inquiries</p>
+              <p id="statNewContacts" class="text-3xl font-bold text-red-600">-</p>
+            </div>
+            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+              <i class="fas fa-bell text-red-600"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-6 shadow-sm border mb-6">
+        <h2 class="text-lg font-bold mb-4">Settings</h2>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-gray-700 font-medium">Hiring Banner</p>
+            <p class="text-sm text-gray-500">Show/hide the hiring banner on the website</p>
+          </div>
+          <button id="toggleHiringBanner" onclick="toggleHiringBanner()" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+            Loading...
+          </button>
+        </div>
+      </div>
+
+      <div class="px-4 bg-white rounded-xl shadow-sm border" style="height: 60vh;">
+        <div class="border-b flex">
+          <button onclick="showTab('jobs')" id="tabJobs" class="px-6 py-4 font-semibold text-gray-600 hover:text-blue-600 tab-active">
+            <i class="fas fa-briefcase mr-2"></i> Jobs
+          </button>
+          <button onclick="showTab('applications')" id="tabApplications" class="px-6 py-4 font-semibold text-gray-600 hover:text-blue-600">
+            <i class="fas fa-file-alt mr-2"></i> Applications
+          </button>
+          <button onclick="showTab('contacts')" id="tabContacts" class="px-6 py-4 font-semibold text-gray-600 hover:text-blue-600">
+            <i class="fas fa-envelope mr-2"></i> Contacts
+          </button>
+        </div>
+
+        <div id="panelJobs" class="p-6" style="height: calc(100% - 4rem); overflow-y: auto;">
+          <div class="sticky top-0 bg-white pb-4 mb-4 border-b border-gray-200" style="z-index: 1;">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-bold">Job Listings <span id="jobsTotal" class="text-gray-500 text-base"></span></h2>
+              <div class="flex gap-2">
+                <button id="deleteAllBtn" onclick="toggleDeleteMode()" class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700">
+                  <i class="fas fa-trash mr-2"></i> Delete All Jobs
+                </button>
+                <button onclick="openJobModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700">
+                  <i class="fas fa-plus mr-2"></i> Add Job
+                </button>
+              </div>
+            </div>
+            <div id="deleteControls" class="hidden mt-4 flex items-center gap-2">
+              <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+              <label for="selectAll" class="text-sm font-medium">Select All</label>
+              <button onclick="deleteSelectedJobs()" class="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700">
+                <i class="fas fa-trash mr-2"></i> Delete Selected
+              </button>
+              <button onclick="toggleDeleteMode()" class="bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-gray-700">
+                Cancel
+              </button>
+            </div>
+          </div>
+          <div id="jobsList" class="space-y-3">
+            <p class="text-gray-500">Loading...</p>
+          </div>
+        </div>
+
+        <div id="panelApplications" class="p-6 hidden" style="height: calc(100% - 4rem); overflow-y: auto;">
+          <div class="sticky top-0 bg-white pb-4 mb-4 border-b" style="z-index: 1;">
+            <h2 class="text-lg font-bold">Job Applications <span id="applicationsTotal" class="text-gray-500 text-base"></span></h2>
+          </div>
+          <div id="applicationsList" class="space-y-3">
+            <p class="text-gray-500">Loading...</p>
+          </div>
+        </div>
+
+        <div id="panelContacts" class="p-6 hidden" style="height: calc(100% - 4rem); overflow-y: auto;">
+          <div class="sticky top-0 bg-white pb-4 mb-4 border-b" style="z-index: 1;">
+            <h2 class="text-lg font-bold">Contact Submissions <span id="contactsTotal" class="text-gray-500 text-base"></span></h2>
+          </div>
+          <div id="contactsList" class="space-y-3">
+            <p class="text-gray-500">Loading...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="jobModal" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b flex items-center justify-between">
+        <h3 id="jobModalTitle" class="text-xl font-bold">Add New Job</h3>
+        <button onclick="closeJobModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <form onsubmit="saveJob(event)" class="p-6 space-y-4">
+        <input type="hidden" id="jobId">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Job Title *</label>
+            <input type="text" id="jobTitle" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+            <input type="text" id="jobDepartment" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+            <input type="text" id="jobLocation" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Job Type</label>
+            <select id="jobType" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Contract">Contract</option>
+              <option value="Remote">Remote</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Salary Range</label>
+          <input type="text" id="jobSalary" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g. $50,000 - $70,000">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea id="jobDescription" rows="3" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Requirements (one per line)</label>
+          <textarea id="jobRequirements" rows="4" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Excellent communication skills&#10;2+ years experience&#10;..."></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Benefits (one per line)</label>
+          <textarea id="jobBenefits" rows="3" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Health insurance&#10;Paid time off&#10;..."></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Validity Date (optional - job expires after this date)</label>
+          <input type="date" id="jobValidityDate" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="jobIsActive" checked class="w-4 h-4 text-blue-600 rounded">
+          <label for="jobIsActive" class="text-sm text-gray-700">Active (visible on website)</label>
+        </div>
+        <div class="flex gap-3 pt-4">
+          <button type="submit" class="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
+            <i class="fas fa-save mr-2"></i> Save Job
+          </button>
+          <button type="button" onclick="closeJobModal()" class="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="applicationsModal" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b flex items-center justify-between">
+        <h3 id="applicationsModalTitle" class="text-xl font-bold">Applications for Job</h3>
+        <button onclick="closeApplicationsModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <div id="applicationsModalContent" class="p-6">
+        <p class="text-gray-500">Loading applications...</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="detailModal" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div class="p-6 border-b flex items-center justify-between">
+        <h3 id="detailModalTitle" class="text-xl font-bold">Details</h3>
+        <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+      <div id="detailModalContent" class="p-6"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script>
+    let API_URL = '';
+    let ADMIN_TOKEN = '';
+    let AUTH_TOKEN = '';
+    let deleteMode = false;
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('adminUsername').value.trim();
+      const password = document.getElementById('adminPassword').value;
+      const tokenFallback = document.getElementById('adminToken').value.trim();
+      API_URL = document.getElementById('apiUrl').value.replace(/\/$/, '');
+      if (!API_URL) API_URL = '';
+
+      try {
+        if (username && password) {
+          // username/password login
+          const res = await fetch(`${API_URL}/api/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          })
+          if (!res.ok) throw new Error('Invalid credentials')
+          const data = await res.json()
+          AUTH_TOKEN = data.token
+          localStorage.setItem('authToken', AUTH_TOKEN)
+        } else if (tokenFallback) {
+          // legacy token
+          ADMIN_TOKEN = tokenFallback
+          localStorage.setItem('adminToken', ADMIN_TOKEN)
+        } else {
+          throw new Error('Provide username/password or token')
+        }
+
+        localStorage.setItem('apiUrl', API_URL)
+        document.getElementById('loginScreen').classList.add('hidden')
+        document.getElementById('dashboard').classList.remove('hidden')
+        loadDashboard()
+        setupRealtime()
+      } catch (err) {
+        document.getElementById('loginError').textContent = err.message || 'Invalid token or server unreachable'
+        document.getElementById('loginError').classList.remove('hidden')
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('apiUrl');
+      location.reload();
+    }
+
+    window.onload = function() {
+      const savedToken = localStorage.getItem('adminToken');
+      const savedUrl = localStorage.getItem('apiUrl');
+      if (savedToken && savedUrl) {
+        ADMIN_TOKEN = savedToken;
+        API_URL = savedUrl;
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadDashboard();
+        setupRealtime();
+      }
+    };
+
+    async function api(endpoint, method = 'GET', body = null) {
+      const headers = { 'Content-Type': 'application/json' }
+      if (AUTH_TOKEN) headers['Authorization'] = `Bearer ${AUTH_TOKEN}`
+      else if (ADMIN_TOKEN) headers['x-admin-token'] = ADMIN_TOKEN
+      const opts = { method, headers }
+      if (body) opts.body = JSON.stringify(body)
+      const res = await fetch(`${API_URL}${endpoint}`, opts)
+      if (!res.ok) throw new Error(await res.text())
+      return res.json()
+    }
+
+    async function loadDashboard() {
+      try {
+        const stats = await api('/api/admin/stats');
+        document.getElementById('statActiveJobs').textContent = stats.activeJobs;
+        document.getElementById('statResumes').textContent = stats.totalResumes;
+        document.getElementById('statContacts').textContent = stats.totalContacts;
+        document.getElementById('statNewContacts').textContent = stats.newContacts;
+
+        // Update section headers with totals
+        document.getElementById('jobsTotal').textContent = `(Total: ${stats.totalJobs})`;
+        document.getElementById('applicationsTotal').textContent = `(Total: ${stats.totalResumes})`;
+        document.getElementById('contactsTotal').textContent = `(Total: ${stats.totalContacts})`;
+
+        loadJobs();
+        loadApplications();
+        loadContacts();
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+      }
+    }
+
+    function showTab(tab) {
+      ['Jobs', 'Applications', 'Contacts'].forEach(t => {
+        document.getElementById(`tab${t}`).classList.remove('tab-active');
+        document.getElementById(`panel${t}`).classList.add('hidden');
+      });
+      document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('tab-active');
+      document.getElementById(`panel${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
+    }
+
+    async function loadJobs() {
+      try {
+        const jobs = await api('/api/admin/jobs');
+        const container = document.getElementById('jobsList');
+        if (jobs.length === 0) {
+          container.innerHTML = '<p class="text-gray-500">No jobs posted yet.</p>';
+          return;
+        }
+        const now = new Date();
+        container.innerHTML = jobs.map(job => {
+          let status = 'Inactive';
+          let statusClass = 'bg-gray-200 text-gray-600';
+          if (job.isActive) {
+            if (job.validityDate && new Date(job.validityDate) < now) {
+              status = 'Expired';
+              statusClass = 'bg-red-100 text-red-700';
+            } else {
+              status = 'Active';
+              statusClass = 'bg-green-100 text-green-700';
+            }
+          }
+          return `
+          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border ${!job.isActive ? 'opacity-60' : ''}">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" class="job-checkbox" data-job-id="${job._id}" style="display: none;">
+              <div>
+                <h4 class="font-semibold text-gray-900">${job.title}</h4>
+                <p class="text-sm text-gray-500">${job.department || ''} • ${job.location || ''} • ${job.type || ''}</p>
+                <p class="text-xs text-gray-400 mt-1">${job.validityDate ? 'Valid until: ' + new Date(job.validityDate).toLocaleDateString() : 'No expiry set'}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-1 text-xs rounded-full ${statusClass}">
+                ${status}
+              </span>
+              <button onclick="editJob('${job._id}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded edit-btn">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="deleteJob('${job._id}')" class="p-2 text-red-600 hover:bg-red-50 rounded delete-btn">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `}).join('');
+        if (deleteMode) {
+          document.querySelectorAll('.job-checkbox').forEach(cb => cb.style.display = 'block');
+          document.querySelectorAll('.edit-btn').forEach(btn => btn.style.display = 'none');
+          document.querySelectorAll('.delete-btn').forEach(btn => btn.style.display = 'none');
+        }
+      } catch (err) {
+        console.error('Jobs load error:', err);
+      }
+    }
+
+    function openJobModal(job = null) {
+      document.getElementById('jobModalTitle').textContent = job ? 'Edit Job' : 'Add New Job';
+      document.getElementById('jobId').value = job?._id || '';
+      document.getElementById('jobTitle').value = job?.title || '';
+      document.getElementById('jobDepartment').value = job?.department || '';
+      document.getElementById('jobLocation').value = job?.location || '';
+      document.getElementById('jobType').value = job?.type || 'Full-time';
+      document.getElementById('jobSalary').value = job?.salary || '';
+      document.getElementById('jobDescription').value = job?.description || '';
+      document.getElementById('jobRequirements').value = (job?.requirements || []).join('\n');
+      document.getElementById('jobBenefits').value = (job?.benefits || []).join('\n');
+      document.getElementById('jobValidityDate').value = job?.validityDate ? new Date(job.validityDate).toISOString().split('T')[0] : '';
+      document.getElementById('jobIsActive').checked = job?.isActive !== false;
+      document.getElementById('jobModal').classList.add('active');
+    }
+
+    function closeJobModal() { document.getElementById('jobModal').classList.remove('active'); }
+
+    async function viewJobApplications(jobId, jobTitle) {
+      document.getElementById('applicationsModalTitle').textContent = `Applications for ${jobTitle}`;
+      document.getElementById('applicationsModal').classList.add('active');
+      const content = document.getElementById('applicationsModalContent');
+      content.innerHTML = '<p class="text-gray-500">Loading applications...</p>';
+      
+      try {
+        const resumes = await api(`/api/admin/resumes?jobId=${jobId}&limit=1000`);
+        if (resumes.items.length === 0) {
+          content.innerHTML = '<p class="text-gray-500">No applications for this job yet.</p>';
+          return;
+        }
+        content.innerHTML = resumes.items.map(app => `
+          <div class="p-4 bg-white border border-gray-200 rounded-lg mb-4 shadow-sm">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <div class="mb-3">
+                  <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</span>
+                  <p class="text-sm font-medium text-gray-900">${app.name}</p>
+                </div>
+                <div class="mb-3">
+                  <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</span>
+                  <p class="text-sm text-gray-700">${app.email}</p>
+                </div>
+                <div class="mb-3">
+                  <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone</span>
+                  <p class="text-sm text-gray-700">${app.phone || "Not provided"}</p>
+                </div>
+              </div>
+              <div>
+                <div class="mb-3">
+                  <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Position</span>
+                  <p class="text-sm text-gray-700">${app.position || "General Application"}</p>
+                </div>
+                <div class="mb-3">
+                  <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Applied On</span>
+                  <p class="text-sm text-gray-700">${new Date(app.createdAt).toLocaleString()}</p>
+                </div>
+                <div class="mb-3">
+                  <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Resume</span>
+                  <a href="${API_URL}${app.resumeUrl}" target="_blank" class="inline-flex items-center gap-2 px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-file-pdf"></i> View Resume
+                  </a>
+                </div>
+              </div>
+            </div>
+            ${app.coverLetter ? `<div class="mt-4 pt-4 border-t border-gray-200">
+              <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Cover Letter</span>
+              <p class="text-sm text-gray-700 mt-1 leading-relaxed">${app.coverLetter}</p>
+            </div>` : ''}
+            <div class="flex justify-end mt-4">
+              <button onclick="deleteApplication('${app._id}')" class="px-3 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors flex items-center gap-2">
+                <i class="fas fa-trash"></i> Delete Application
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        content.innerHTML = '<p class="text-red-500">Failed to load applications.</p>';
+      }
+    }
+
+    function closeApplicationsModal() { document.getElementById('applicationsModal').classList.remove('active'); }
+
+    async function editJob(id) { try { const job = await api(`/api/jobs/${id}`); openJobModal(job); } catch (err) { alert('Failed to load job'); } }
+
+    async function saveJob(e) {
+      e.preventDefault();
+      const id = document.getElementById('jobId').value;
+      const validityDateValue = document.getElementById('jobValidityDate').value;
+      const data = {
+        title: document.getElementById('jobTitle').value,
+        department: document.getElementById('jobDepartment').value,
+        location: document.getElementById('jobLocation').value,
+        type: document.getElementById('jobType').value,
+        salary: document.getElementById('jobSalary').value,
+        description: document.getElementById('jobDescription').value,
+        requirements: document.getElementById('jobRequirements').value.split('\n').filter(r => r.trim()),
+        benefits: document.getElementById('jobBenefits').value.split('\n').filter(b => b.trim()),
+        isActive: document.getElementById('jobIsActive').checked
+      };
+      if (validityDateValue) data.validityDate = new Date(validityDateValue).toISOString();
+      try {
+        if (id) await api(`/api/jobs/${id}`, 'PUT', data); else await api('/api/jobs', 'POST', data);
+        closeJobModal(); loadJobs(); loadDashboard();
+      } catch (err) { alert('Failed to save job: ' + err.message); }
+    }
+
+    async function deleteJob(id) { if (!confirm('Are you sure you want to delete this job?')) return; try { await api(`/api/jobs/${id}`, 'DELETE'); loadJobs(); loadDashboard(); } catch (err) { alert('Failed to delete job'); } }
+
+    function toggleDeleteMode() {
+      deleteMode = !deleteMode;
+      const checkboxes = document.querySelectorAll('.job-checkbox');
+      const editBtns = document.querySelectorAll('.edit-btn');
+      const deleteBtns = document.querySelectorAll('.delete-btn');
+      const deleteControls = document.getElementById('deleteControls');
+      const deleteAllBtn = document.getElementById('deleteAllBtn');
+      const addBtn = document.querySelector('#panelJobs button[onclick="openJobModal()"]');
+
+      if (deleteMode) {
+        checkboxes.forEach(cb => cb.style.display = 'block');
+        editBtns.forEach(btn => btn.style.display = 'none');
+        deleteBtns.forEach(btn => btn.style.display = 'none');
+        deleteControls.classList.remove('hidden');
+        deleteAllBtn.textContent = 'Cancel Delete';
+        deleteAllBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+        deleteAllBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+        addBtn.style.display = 'none';
+      } else {
+        checkboxes.forEach(cb => { cb.style.display = 'none'; cb.checked = false; });
+        editBtns.forEach(btn => btn.style.display = 'inline-block');
+        deleteBtns.forEach(btn => btn.style.display = 'inline-block');
+        deleteControls.classList.add('hidden');
+        document.getElementById('selectAll').checked = false;
+        deleteAllBtn.textContent = 'Delete All Jobs';
+        deleteAllBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+        deleteAllBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+        addBtn.style.display = 'inline-block';
+      }
+    }
+
+    function toggleSelectAll() {
+      const selectAll = document.getElementById('selectAll');
+      const checkboxes = document.querySelectorAll('.job-checkbox');
+      checkboxes.forEach(cb => cb.checked = selectAll.checked);
+    }
+
+    async function deleteSelectedJobs() {
+      const checkboxes = document.querySelectorAll('.job-checkbox:checked');
+      if (checkboxes.length === 0) {
+        alert('No jobs selected');
+        return;
+      }
+      if (!confirm(`Are you sure you want to delete ${checkboxes.length} job(s)?`)) return;
+      try {
+        for (const cb of checkboxes) {
+          await api(`/api/jobs/${cb.dataset.jobId}`, 'DELETE');
+        }
+        toggleDeleteMode();
+        loadJobs();
+        loadDashboard();
+      } catch (err) {
+        alert('Failed to delete some jobs: ' + err.message);
+      }
+    }
+
+    async function loadApplications() {
+      try {
+        const jobsData = await api('/api/jobs');
+        const container = document.getElementById('applicationsList');
+        if (jobsData.length === 0) { container.innerHTML = '<p class="text-gray-500">No jobs posted yet.</p>'; return; }
+        
+        const jobsWithCounts = await Promise.all(jobsData.map(async (job) => {
+          try {
+            const resumes = await api(`/api/admin/resumes?jobId=${job._id}`);
+            return { ...job, applicationCount: resumes.total };
+          } catch (err) {
+            return { ...job, applicationCount: 0 };
+          }
+        }));
+        
+        container.innerHTML = jobsWithCounts.map(job => `
+          <div class="p-4 bg-gray-50 rounded-lg border">
+            <div class="flex items-center justify-between">
+              <div class="flex-1">
+                <h3 class="font-semibold text-gray-900">${job.title}</h3>
+                <p class="text-sm text-gray-600">${job.location || 'Remote'} • ${job.type || 'Full-time'}</p>
+                <p class="text-sm text-gray-500">${job.applicationCount} application${job.applicationCount !== 1 ? 's' : ''} received</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="viewJobApplications('${job._id}', '${job.title}')" class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                  View Applications
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) { 
+        console.error('Applications load error:', err); 
+        document.getElementById('applicationsList').innerHTML = '<p class="text-red-500">Failed to load applications.</p>';
+      }
+    }
+
+    async function deleteApplication(id) { if (!confirm('Are you sure you want to delete this application?')) return; try { await api(`/api/admin/resumes/${id}`, 'DELETE'); loadApplications(); loadDashboard(); } catch (err) { alert('Failed to delete application'); } }
+
+    async function loadContacts() {
+      try {
+        const data = await api('/api/admin/contacts?limit=50');
+        const container = document.getElementById('contactsList');
+        if (data.items.length === 0) { container.innerHTML = '<p class="text-gray-500">No contact submissions yet.</p>'; return; }
+        container.innerHTML = data.items.map(c => `
+          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border ${c.status === "contacted" ? "border-green-500 bg-green-50" : ""}">
+            <div class="flex-1">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <div class="mb-2">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</span>
+                    <p class="text-sm font-medium text-gray-900">${c.name}</p>
+                  </div>
+                  <div class="mb-2">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</span>
+                    <p class="text-sm text-gray-700">${c.email}</p>
+                  </div>
+                  <div class="mb-2">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone</span>
+                    <p class="text-sm text-gray-700">${c.phone || "Not provided"}</p>
+                  </div>
+                </div>
+                <div>
+                  ${c.company ? `<div class="mb-2">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Company</span>
+                    <p class="text-sm text-gray-700">${c.company}</p>
+                  </div>` : ''}
+                  <div class="mb-2">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</span>
+                    <p class="text-sm ${c.status === "contacted" ? "text-green-700 font-medium" : "text-orange-700"}">${c.status || "new"}</p>
+                  </div>
+                  <div class="mb-2">
+                    <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Submitted</span>
+                    <p class="text-sm text-gray-700">${new Date(c.createdAt).toLocaleString()}</p>
+                  </div>
+                </div>
+              </div>
+              ${c.message ? `<div class="mt-4 pt-4 border-t border-gray-200">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Message</span>
+                <p class="text-sm text-gray-700 mt-1 leading-relaxed">${c.message}</p>
+              </div>` : ''}
+            </div>
+            <div class="flex items-center gap-2 ml-4">
+              ${c.status !== "contacted" ? `<button onclick="updateContactStatus('${c._id}', 'contacted')" class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors">Mark as Contacted</button>` : '<span class="px-3 py-1 bg-green-600 text-white text-sm rounded">Contacted</span>'}
+              <button onclick="deleteContact('${c._id}')" class="p-2 text-red-600 hover:bg-red-50 rounded transition-colors">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) { console.error('Contacts load error:', err); }
+    }
+
+    async function updateContactStatus(id, status) { try { await api(`/api/admin/contacts/${id}`, 'PUT', { status }); loadContacts(); loadDashboard(); } catch (err) { alert('Failed to update status'); } }
+    async function deleteContact(id) { if (!confirm('Are you sure you want to delete this contact?')) return; try { await api(`/api/admin/contacts/${id}`, 'DELETE'); loadContacts(); loadDashboard(); } catch (err) { alert('Failed to delete contact'); } }
+
+    function closeDetailModal() { document.getElementById('detailModal').classList.remove('active'); }
+
+    let sse; let poller; let autoRefresher;
+    function setupRealtime() {
+      if (sse) { try { sse.close(); } catch (e) {} }
+      if (poller) { clearInterval(poller); }
+      if (autoRefresher) { clearInterval(autoRefresher); }
+      try {
+        // EventSource cannot set headers; pass token via adminToken query param (supports both legacy token and JWT)
+        const tokenForSse = AUTH_TOKEN || ADMIN_TOKEN || ''
+        const url = `${API_URL}/api/admin/events${tokenForSse ? '?adminToken=' + encodeURIComponent(tokenForSse) : ''}`
+        sse = new EventSource(url)
+        sse.onopen = () => { if (poller) { clearInterval(poller); poller = null; } };
+        sse.onerror = () => { if (!poller) startPolling(); };
+        sse.addEventListener('job-change', () => { loadJobs(); loadDashboard(); });
+        sse.addEventListener('resume-change', () => { loadApplications(); loadDashboard(); });
+        sse.addEventListener('contact-change', () => { loadContacts(); loadDashboard(); });
+      } catch (e) { startPolling(); }
+      // Auto refresh dashboard every 30 seconds
+      autoRefresher = setInterval(() => {
+        loadDashboard();
+      }, 30000);
+      function startPolling() {
+        if (poller) return;
+        poller = setInterval(() => {
+          loadJobs(); loadApplications(); loadContacts();
+          api('/api/admin/stats').then(stats => {
+            document.getElementById('statActiveJobs').textContent = stats.activeJobs;
+            document.getElementById('statResumes').textContent = stats.totalResumes;
+            document.getElementById('statContacts').textContent = stats.totalContacts;
+            document.getElementById('statNewContacts').textContent = stats.newContacts;
+          }).catch(()=>{});
+        }, 15000);
+      }
+    }
+
+    async function loadSettings() {
+      try {
+        const res = await api('/api/admin/settings/hiringBannerEnabled');
+        const enabled = res.value;
+        const btn = document.getElementById('toggleHiringBanner');
+        btn.textContent = enabled ? 'Disable Hiring Banner' : 'Enable Hiring Banner';
+        btn.className = enabled ? 'px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700' : 'px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700';
+      } catch (err) {
+        console.error('Settings load error:', err);
+      }
+    }
+
+    async function toggleHiringBanner() {
+      try {
+        const btn = document.getElementById('toggleHiringBanner');
+        const currentlyEnabled = btn.textContent.includes('Disable');
+        const newValue = !currentlyEnabled;
+        await api('/api/admin/settings/hiringBannerEnabled', 'PUT', { value: newValue });
+        loadSettings();
+      } catch (err) {
+        alert('Failed to update setting');
+      }
+    }
+
+    // Load settings on login
+    loadSettings();
+  </script>
+</body>
+</html>
