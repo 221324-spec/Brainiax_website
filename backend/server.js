@@ -95,6 +95,16 @@ app.use('/api/contacts', contactsRouter)
 app.use('/api/resumes', resumesRouter)
 app.use('/api/admin', adminRouter)
 
+// Health check endpoint for deployment verification
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0'
+  })
+})
+
 // No backend/public/admin fallback; admin is served from frontend/public during dev or dist/admin in prod
 
 // Root

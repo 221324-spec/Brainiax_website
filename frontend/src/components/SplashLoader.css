@@ -1,0 +1,87 @@
+/* Ben 10 style splash loader */
+.splash-loader-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s;
+  pointer-events: all;
+}
+.splash-loader-bg.splash-hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+.splash-loader-bg.splash-vanish {
+  animation: splash-vanish 0.8s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+
+@keyframes splash-vanish {
+  0% {
+    opacity: 1;
+    filter: none;
+  }
+  100% {
+    opacity: 0;
+    filter: blur(8px) brightness(1.1);
+  }
+}
+
+
+.splash-ripples {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.splash-ripple {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #111;
+  opacity: 0.55;
+  animation: splash-ripple-expand 0.8s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+.splash-ripple.r1 { animation-delay: 0s; }
+.splash-ripple.r2 { animation-delay: 0.14s; }
+.splash-ripple.r3 { animation-delay: 0.28s; }
+.splash-ripple.r4 { animation-delay: 0.42s; }
+
+@keyframes splash-ripple-expand {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+    border-width: 2px;
+  }
+  60% {
+    opacity: 0.32;
+    border-width: 1.5px;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(3.5);
+    border-width: 1px;
+  }
+}
+.splash-loader-svg-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.splash-svg-spinner {
+  animation: splash-svg-spin 1.2s linear infinite;
+  display: block;
+}
+@keyframes splash-svg-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
