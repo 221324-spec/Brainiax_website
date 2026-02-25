@@ -7,6 +7,8 @@ const fs = require('fs')
 dotenv.config({ path: path.join(__dirname, '.env') })
 
 const connectDB = require('./src/config/db')
+const AdminUser = require('./src/models/AdminUser')
+const bcrypt = require('bcryptjs')
 const jobsRouter = require('./src/routes/jobs')
 const contactsRouter = require('./src/routes/contacts')
 const resumesRouter = require('./src/routes/resumes')
@@ -110,8 +112,36 @@ app.get('/health', (req, res) => {
 // Root
 app.get('/', (req, res) => res.send('Brainiax Backend is running'))
 
+// Auto-create admin user on startup if it doesn't exist
+async function createDefaultAdmin() {
+  try {
+    const username = process.env.CREATE_ADMIN_USERNAME || 'admin'
+    const password = process.env.CREATE_ADMIN_PASSWORD || 'admin123'
+    
+    // Check if admin already exists
+    const existingAdmin = await AdminUser.findOne({ username })
+    if (existingAdmin) {
+      console.log(`Admin user '${username}' already exists`)
+      return
+    }
+
+    // Create new admin user
+    const passwordHash = await bcrypt.hash(password, 10)
+    const newAdmin = await AdminUser.create({ username, passwordHash })
+    console.log(`✅ Default admin user created: ${newAdmin.username}`)
+    console.log(`   Username: ${username}`)
+    console.log(`   Password: ${password}`)
+    console.log(`   🚨 Change password after first login!`)
+  } catch (error) {
+    console.error('❌ Failed to create default admin user:', error.message)
+  }
+}
+
 // Connect DB and start
-connectDB().then(() => {
+connectDB().then(async () => {
+  // Create default admin user
+  await createDefaultAdmin()
+  
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })

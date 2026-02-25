@@ -72,6 +72,13 @@ Set in Vercel dashboard:
 - **Build Command**: `cd backend && npm ci`
 - **Start Command**: `cd backend && npm start`
 
+### Auto-Admin Creation
+The backend automatically creates a default admin user on first startup:
+- **Default Username**: `admin` (or from `CREATE_ADMIN_USERNAME` env var)
+- **Default Password**: `admin123` (or from `CREATE_ADMIN_PASSWORD` env var)
+
+**🚨 Important**: Change the default password after first login!
+
 ---
 
 ## Deployment Steps
@@ -79,9 +86,10 @@ Set in Vercel dashboard:
 ### 1. Deploy Backend First
 1. Push your code to GitHub
 2. Connect repository to Render  
-3. Set environment variables
+3. Set environment variables (see below)
 4. Deploy backend service
-5. Note the backend URL (e.g., `https://brainiax-backend.onrender.com`)
+5. **Admin user is auto-created** on first startup
+6. Note the backend URL (e.g., `https://brainiax-backend.onrender.com`)
 
 ### 2. Deploy Frontend + Admin
 1. Connect repository to Vercel
@@ -109,6 +117,12 @@ PORT=5000
 CLIENT_ORIGIN=https://brainiax.vercel.app
 JWT_SECRET=your-strong-jwt-secret
 ADMIN_TOKEN=your-strong-admin-token
+
+# Admin user auto-creation (optional)
+CREATE_ADMIN_USERNAME=admin
+CREATE_ADMIN_PASSWORD=your-secure-password
+
+# Email settings
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-gmail@gmail.com
