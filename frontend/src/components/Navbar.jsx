@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 import './Navbar.css'
 
 const Navbar = ({ onOpenContact }) => {
-  const API_BASE = import.meta.env.VITE_API_BASE || ''
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
   const [isScrolled, setIsScrolled] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)

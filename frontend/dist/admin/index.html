@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/admin/admin.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
-  <!-- Admin panel content is identical to root public/admin version -->
+  <!-- The rest of this file mirrors backend/admin.html functionality -->
   <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
       <div class="text-center mb-8">
@@ -27,9 +27,9 @@
         </div>
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-2">API URL</label>
-             <input type="text" id="apiUrl" value=""
-               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-               placeholder="https://your-backend.onrender.com">
+          <input type="text" id="apiUrl" value=""
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="https://your-backend.onrender.com">
         </div>
         <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
           <i class="fas fa-sign-in-alt mr-2"></i> Login
@@ -224,6 +224,329 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-  <!-- The same JS from root public/admin/index.html should be placed here as needed -->
+  <script>
+    let API_URL = '';
+    let ADMIN_TOKEN = '';
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      ADMIN_TOKEN = document.getElementById('adminToken').value;
+      API_URL = document.getElementById('apiUrl').value.replace(/\/$/, '');
+
+      try {
+        const res = await fetch(`${API_URL}/api/admin/stats`, {
+          headers: { 'x-admin-token': ADMIN_TOKEN }
+        });
+        if (!res.ok) throw new Error('Invalid token');
+
+        localStorage.setItem('adminToken', ADMIN_TOKEN);
+        localStorage.setItem('apiUrl', API_URL);
+
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadDashboard();
+        setupRealtime();
+      } catch (err) {
+        document.getElementById('loginError').textContent = 'Invalid token or server unreachable';
+        document.getElementById('loginError').classList.remove('hidden');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('apiUrl');
+      location.reload();
+    }
+
+    window.onload = function() {
+      const savedToken = localStorage.getItem('adminToken');
+      const savedUrl = localStorage.getItem('apiUrl');
+      if (savedToken && savedUrl) {
+        ADMIN_TOKEN = savedToken;
+        API_URL = savedUrl;
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadDashboard();
+        setupRealtime();
+      }
+    };
+
+    async function api(endpoint, method = 'GET', body = null) {
+      const opts = {
+        method,
+        headers: { 'x-admin-token': ADMIN_TOKEN, 'Content-Type': 'application/json' }
+      };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(`${API_URL}${endpoint}`, opts);
+      if (!res.ok) throw new Error(await res.text());
+      return res.json();
+    }
+
+    async function loadDashboard() {
+      try {
+        const stats = await api('/api/admin/stats');
+        document.getElementById('statActiveJobs').textContent = stats.activeJobs;
+        document.getElementById('statResumes').textContent = stats.totalResumes;
+        document.getElementById('statContacts').textContent = stats.totalContacts;
+        document.getElementById('statNewContacts').textContent = stats.newContacts;
+
+        loadJobs();
+        loadApplications();
+        loadContacts();
+      } catch (err) {
+        console.error('Dashboard load error:', err);
+      }
+    }
+
+    function showTab(tab) {
+      ['Jobs', 'Applications', 'Contacts'].forEach(t => {
+        document.getElementById(`tab${t}`).classList.remove('tab-active');
+        document.getElementById(`panel${t}`).classList.add('hidden');
+      });
+      document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('tab-active');
+      document.getElementById(`panel${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
+    }
+
+    async function loadJobs() {
+      try {
+        const jobs = await api('/api/admin/jobs');
+        const container = document.getElementById('jobsList');
+        if (jobs.length === 0) {
+          container.innerHTML = '<p class="text-gray-500">No jobs posted yet.</p>';
+          return;
+        }
+        container.innerHTML = jobs.map(job => `
+          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border ${!job.isActive ? 'opacity-60' : ''}">
+            <div>
+              <h4 class="font-semibold text-gray-900">${job.title}</h4>
+              <p class="text-sm text-gray-500">${job.department || ''} • ${job.location || ''} • ${job.type || ''}</p>
+              <p class="text-xs text-gray-400 mt-1">${job.applicationsCount || 0} applications</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-1 text-xs rounded-full ${job.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}">
+                ${job.isActive ? 'Active' : 'Inactive'}
+              </span>
+              <button onclick="editJob('${'${job._id}'}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button onclick="deleteJob('${'${job._id}'}')" class="p-2 text-red-600 hover:bg-red-50 rounded">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Jobs load error:', err);
+      }
+    }
+
+    function openJobModal(job = null) {
+      document.getElementById('jobModalTitle').textContent = job ? 'Edit Job' : 'Add New Job';
+      document.getElementById('jobId').value = job?._id || '';
+      document.getElementById('jobTitle').value = job?.title || '';
+      document.getElementById('jobDepartment').value = job?.department || '';
+      document.getElementById('jobLocation').value = job?.location || '';
+      document.getElementById('jobType').value = job?.type || 'Full-time';
+      document.getElementById('jobSalary').value = job?.salary || '';
+      document.getElementById('jobDescription').value = job?.description || '';
+      document.getElementById('jobRequirements').value = (job?.requirements || []).join('\n');
+      document.getElementById('jobBenefits').value = (job?.benefits || []).join('\n');
+      document.getElementById('jobIsActive').checked = job?.isActive !== false;
+      document.getElementById('jobModal').classList.add('active');
+    }
+
+    function closeJobModal() {
+      document.getElementById('jobModal').classList.remove('active');
+    }
+
+    async function editJob(id) {
+      try {
+        const job = await api(`/api/jobs/${id}`);
+        openJobModal(job);
+      } catch (err) {
+        alert('Failed to load job');
+      }
+    }
+
+    async function saveJob(e) {
+      e.preventDefault();
+      const id = document.getElementById('jobId').value;
+      const data = {
+        title: document.getElementById('jobTitle').value,
+        department: document.getElementById('jobDepartment').value,
+        location: document.getElementById('jobLocation').value,
+        type: document.getElementById('jobType').value,
+        salary: document.getElementById('jobSalary').value,
+        description: document.getElementById('jobDescription').value,
+        requirements: document.getElementById('jobRequirements').value.split('\n').filter(r => r.trim()),
+        benefits: document.getElementById('jobBenefits').value.split('\n').filter(b => b.trim()),
+        isActive: document.getElementById('jobIsActive').checked
+      };
+      try {
+        if (id) {
+          await api(`/api/jobs/${id}`, 'PUT', data);
+        } else {
+          await api('/api/jobs', 'POST', data);
+        }
+        closeJobModal();
+        loadJobs();
+        loadDashboard();
+      } catch (err) {
+        alert('Failed to save job: ' + err.message);
+      }
+    }
+
+    async function deleteJob(id) {
+      if (!confirm('Are you sure you want to delete this job?')) return;
+      try {
+        await api(`/api/jobs/${id}`, 'DELETE');
+        loadJobs();
+        loadDashboard();
+      } catch (err) {
+        alert('Failed to delete job');
+      }
+    }
+
+    async function loadApplications() {
+      try {
+        const data = await api('/api/admin/resumes?limit=50');
+        const container = document.getElementById('applicationsList');
+        if (data.items.length === 0) {
+          container.innerHTML = '<p class="text-gray-500">No applications yet.</p>';
+          return;
+        }
+        container.innerHTML = data.items.map(app => `
+          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
+            <div>
+              <h4 class="font-semibold text-gray-900">${'${app.name}'}</h4>
+              <p class="text-sm text-gray-500">${'${app.email}'} • ${'${app.phone || "No phone"}'}</p>
+              <p class="text-sm text-blue-600">${'${app.position || "General Application"}'}</p>
+              <p class="text-xs text-gray-400 mt-1">${'${new Date(app.createdAt).toLocaleString()}'}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <a href="${'${API_URL}${app.resumeUrl}'}" target="_blank" class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
+                <i class="fas fa-download mr-1"></i> Resume
+              </a>
+              <a href="mailto:${'${app.email}'}" class="p-2 text-green-600 hover:bg-green-50 rounded">
+                <i class="fas fa-envelope"></i>
+              </a>
+              <button onclick="deleteApplication('${'${app._id}'}')" class="p-2 text-red-600 hover:bg-red-50 rounded">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Applications load error:', err);
+      }
+    }
+
+    async function deleteApplication(id) {
+      if (!confirm('Are you sure you want to delete this application?')) return;
+      try {
+        await api(`/api/admin/resumes/${id}`, 'DELETE');
+        loadApplications();
+        loadDashboard();
+      } catch (err) {
+        alert('Failed to delete application');
+      }
+    }
+
+    async function loadContacts() {
+      try {
+        const data = await api('/api/admin/contacts?limit=50');
+        const container = document.getElementById('contactsList');
+        if (data.items.length === 0) {
+          container.innerHTML = '<p class="text-gray-500">No contact submissions yet.</p>';
+          return;
+        }
+        container.innerHTML = data.items.map(c => `
+          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <h4 class="font-semibold text-gray-900">${'${c.name}'}</h4>
+                <span class="px-2 py-0.5 text-xs rounded-full ${'${c.status === "new" ? "bg-red-100 text-red-700" : c.status === "contacted" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}'}">${'${c.status}'}</span>
+              </div>
+              <p class="text-sm text-gray-500">${'${c.email}'} • ${'${c.phone || "No phone"}'}</p>
+              ${'${c.company ? `<p class="text-sm text-gray-600">${c.company}</p>` : ""}'}
+              ${'${c.message ? `<p class=\"text-sm text-gray-700 mt-2 line-clamp-2\">${c.message}</p>` : ""}'}
+              <p class="text-xs text-gray-400 mt-1">${'${new Date(c.createdAt).toLocaleString()}'}</p>
+            </div>
+            <div class="flex items-center gap-2 ml-4">
+              <select onchange="updateContactStatus('${'${c._id}'}', this.value)" class="text-sm border rounded px-2 py-1">
+                <option value="new" ${'${c.status === "new" ? "selected" : ""}'}>New</option>
+                <option value="contacted" ${'${c.status === "contacted" ? "selected" : ""}'}>Contacted</option>
+                <option value="resolved" ${'${c.status === "resolved" ? "selected" : ""}'}>Resolved</option>
+              </select>
+              <a href="mailto:${'${c.email}'}" class="p-2 text-green-600 hover:bg-green-50 rounded">
+                <i class="fas fa-envelope"></i>
+              </a>
+              ${'${c.phone ? `<a href=\"tel:${c.phone}\" class=\"p-2 text-blue-600 hover:bg-blue-50 rounded\"><i class=\"fas fa-phone\"></i></a>` : ""}'}
+              <button onclick="deleteContact('${'${c._id}'}')" class="p-2 text-red-600 hover:bg-red-50 rounded">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Contacts load error:', err);
+      }
+    }
+
+    async function updateContactStatus(id, status) {
+      try {
+        await api(`/api/admin/contacts/${id}`, 'PUT', { status });
+        loadContacts();
+        loadDashboard();
+      } catch (err) {
+        alert('Failed to update status');
+      }
+    }
+
+    async function deleteContact(id) {
+      if (!confirm('Are you sure you want to delete this contact?')) return;
+      try {
+        await api(`/api/admin/contacts/${id}`, 'DELETE');
+        loadContacts();
+        loadDashboard();
+      } catch (err) {
+        alert('Failed to delete contact');
+      }
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+
+    let sse;
+    let poller;
+    function setupRealtime() {
+      if (sse) { try { sse.close(); } catch (e) {} }
+      if (poller) { clearInterval(poller); }
+      try {
+        const url = `${API_URL}/api/admin/events?adminToken=${encodeURIComponent(ADMIN_TOKEN)}`;
+        sse = new EventSource(url);
+        sse.onopen = () => { if (poller) { clearInterval(poller); poller = null; } };
+        sse.onerror = () => { if (!poller) startPolling(); };
+        sse.addEventListener('job-change', () => { loadJobs(); loadDashboard(); });
+        sse.addEventListener('resume-change', () => { loadApplications(); loadDashboard(); });
+        sse.addEventListener('contact-change', () => { loadContacts(); loadDashboard(); });
+      } catch (e) { startPolling(); }
+      function startPolling() {
+        if (poller) return;
+        poller = setInterval(() => {
+          loadJobs();
+          loadApplications();
+          loadContacts();
+          api('/api/admin/stats').then(stats => {
+            document.getElementById('statActiveJobs').textContent = stats.activeJobs;
+            document.getElementById('statResumes').textContent = stats.totalResumes;
+            document.getElementById('statContacts').textContent = stats.totalContacts;
+            document.getElementById('statNewContacts').textContent = stats.newContacts;
+          }).catch(()=>{});
+        }, 15000);
+      }
+    }
+  </script>
 </body>
 </html>

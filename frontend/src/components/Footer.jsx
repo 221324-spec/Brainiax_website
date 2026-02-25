@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react'
 import './Footer.css'
 
 const Footer = () => {
-  const API_BASE = import.meta.env.VITE_API_BASE || ''
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
   const currentYear = new Date().getFullYear()
   const [isHiringOpen, setIsHiringOpen] = useState(false) // default to false
   const [email, setEmail] = useState('')

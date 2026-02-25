@@ -18,7 +18,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import { HIRING_CONFIG } from './config/hiring'
 
-const API_BASE = import.meta.env.VITE_API_BASE || ''
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 function HomePage({ openContact }) {
   return (

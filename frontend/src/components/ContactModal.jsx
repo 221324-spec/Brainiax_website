@@ -3,7 +3,7 @@ import { X, Send, User, Mail, Building2, MessageSquare, Calendar, Loader2 } from
 import './ContactModal.css'
 
 const ContactModal = ({ isOpen, onClose, isDemo = false }) => {
-  const API_BASE = import.meta.env.VITE_API_BASE || ''
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
   const [formData, setFormData] = useState({
     name: '',
     email: '',

@@ -20,7 +20,7 @@ import { Link } from 'react-router-dom'
 import ResumeModal from '../components/ResumeModal'
 import Footer from '../components/Footer'
 
-const API_BASE = import.meta.env.VITE_API_BASE || ''
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 
 const iconMap = {
   DollarSign,

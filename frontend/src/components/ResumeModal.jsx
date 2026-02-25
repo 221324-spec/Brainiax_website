@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import './ResumeModal.css'
 
 const ResumeModal = ({ isOpen, onClose, jobTitle = null, jobId = null }) => {
-  const API_BASE = import.meta.env.VITE_API_BASE || ''
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
   const [formData, setFormData] = useState({
     name: '',
     email: '',

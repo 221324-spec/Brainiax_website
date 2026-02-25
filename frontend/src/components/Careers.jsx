@@ -24,7 +24,7 @@ const iconMap = {
 }
 
 const Careers = () => {
-  const API_BASE = import.meta.env.VITE_API_BASE || ''
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
   const perks = [
     { icon: 'DollarSign', title: 'Competitive Pay', description: 'Top industry salaries' },
     { icon: 'Heart', title: 'Health Benefits', description: 'Comprehensive coverage' },

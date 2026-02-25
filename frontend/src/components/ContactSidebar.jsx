@@ -4,7 +4,7 @@ import { X, Send, User, Mail, Building, MessageSquare, Phone, CheckCircle } from
 import './ContactSidebar.css'
 
 const ContactSidebar = ({ isOpen, onClose }) => {
-  const API_BASE = import.meta.env.VITE_API_BASE || ''
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
   const [formData, setFormData] = useState({
     name: '',
     email: '',
