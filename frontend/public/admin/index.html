@@ -17,6 +17,7 @@
         </div>
         <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
         <p class="text-gray-600 mt-2">Enter your admin token to continue</p>
+        <p class="text-xs text-gray-400 mt-1" id="apiUrlDisplay"></p>
       </div>
       <form onsubmit="handleLogin(event)">
         <div class="mb-4">
@@ -37,7 +38,7 @@
         <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
           <i class="fas fa-sign-in-alt mr-2"></i> Login
         </button>
-        <p id="loginError" class="text-red-500 text-sm mt-3 text-center hidden"></p>
+        <p id="loginError" class="text-red-500 text-xs mt-3 text-left hidden whitespace-pre-line"></p>
       </form>
     </div>
   </div>
@@ -242,8 +243,8 @@
         // Use previously saved URL
         API_URL = localStorage.getItem('apiUrl');
       } else {
-        // Production fallback - update this with your actual Render backend URL
-        API_URL = 'https://brainiax-backend.onrender.com';
+        // Production fallback - your actual Render backend URL
+        API_URL = 'https://brainiax-website.onrender.com';
       }
       
       // Remove trailing slash
@@ -251,6 +252,13 @@
       
       // Set the hidden field
       document.getElementById('apiUrl').value = API_URL;
+      
+      // Display API URL to user
+      const displayEl = document.getElementById('apiUrlDisplay');
+      if (displayEl) {
+        displayEl.textContent = `Backend: ${API_URL}`;
+      }
+      
       console.log('Using API URL:', API_URL);
     }
 
@@ -296,7 +304,13 @@
         loadDashboard();
         setupRealtime();
       } catch (err) {
-        document.getElementById('loginError').textContent = err.message || 'Invalid credentials or server unreachable';
+        console.error('Login error:', err);
+        console.error('API URL used:', API_URL);
+        let errorMsg = err.message || 'Login failed';
+        if (err.message === 'Failed to fetch') {
+          errorMsg = `Cannot connect to backend at ${API_URL}. Please check:\n1. Backend is deployed and running\n2. Backend URL is correct\n3. CORS is configured`;
+        }
+        document.getElementById('loginError').textContent = errorMsg;
         document.getElementById('loginError').classList.remove('hidden');
       }
     }
