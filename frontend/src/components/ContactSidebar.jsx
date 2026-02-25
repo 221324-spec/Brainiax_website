@@ -73,36 +73,36 @@ const ContactSidebar = ({ isOpen, onClose }) => {
                       border-l border-gray-200 z-50 overflow-hidden shadow-2xl"
           >
             {/* Header */}
-            <div className="relative p-6 border-b border-gray-200">
+            <div className="relative p-5 border-b border-gray-200">
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="absolute top-6 right-6 w-10 h-10 rounded-xl bg-gray-100 border border-gray-200
+                className="absolute top-4 right-4 w-9 h-9 rounded-lg bg-gray-100 border border-gray-200
                          flex items-center justify-center text-gray-600 hover:text-gray-900 
                          hover:bg-gray-200 transition-all duration-300"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
 
               {/* Logo */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gray-900 
-                              flex items-center justify-center font-bold text-lg text-white">
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-9 h-9 rounded-lg bg-gray-900 
+                              flex items-center justify-center font-bold text-base text-white">
                   B
                 </div>
-                <span className="text-xl font-bold tracking-tight text-gray-900">
+                <span className="text-lg font-bold tracking-tight text-gray-900">
                   Brain<span className="text-gray-600">iax</span>
                 </span>
               </div>
 
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Get Started</h2>
-              <p className="text-gray-600 text-sm">
+              <h2 className="text-xl font-bold text-gray-900 mb-1.5">Get Started</h2>
+              <p className="text-gray-600 text-xs leading-relaxed">
                 Fill out the form below and our team will get back to you within 24 hours.
               </p>
             </div>
 
             {/* Form Content */}
-            <div className="p-6 h-[calc(100%-180px)] overflow-y-hidden">
+            <div className="p-5 h-[calc(100%-150px)] overflow-y-auto">
               <AnimatePresence mode="wait">
                 {isSuccess ? (
                   <motion.div
@@ -133,12 +133,12 @@ const ContactSidebar = ({ isOpen, onClose }) => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onSubmit={handleSubmit}
-                    className="space-y-5"
+                    className="space-y-3"
                   >
                     {/* Name Field */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <User className="w-4 h-4 text-gray-600" />
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
+                        <User className="w-3.5 h-3.5 text-gray-600" />
                         Full Name
                       </label>
                       <input
@@ -148,17 +148,17 @@ const ContactSidebar = ({ isOpen, onClose }) => {
                         onChange={handleChange}
                         required
                         placeholder="John Doe"
-                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl
-                                 text-gray-900 placeholder-gray-400 
+                        className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                                 text-sm text-gray-900 placeholder-gray-400 
                                  focus:border-gray-400 focus:bg-white focus:outline-none
                                  transition-all duration-300"
                       />
                     </div>
 
                     {/* Email Field */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-gray-600" />
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
+                        <Mail className="w-3.5 h-3.5 text-gray-600" />
                         Email Address
                       </label>
                       <input
@@ -168,17 +168,17 @@ const ContactSidebar = ({ isOpen, onClose }) => {
                         onChange={handleChange}
                         required
                         placeholder="john@company.com"
-                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl
-                                 text-gray-900 placeholder-gray-400 
+                        className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                                 text-sm text-gray-900 placeholder-gray-400 
                                  focus:border-gray-400 focus:bg-white focus:outline-none
                                  transition-all duration-300"
                       />
                     </div>
 
                     {/* Company Field */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Building className="w-4 h-4 text-gray-600" />
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
+                        <Building className="w-3.5 h-3.5 text-gray-600" />
                         Father Name
                       </label>
                       <input
@@ -187,17 +187,17 @@ const ContactSidebar = ({ isOpen, onClose }) => {
                         value={formData.fatherName}
                         onChange={handleChange}
                         placeholder="Your Father's Name"
-                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl
-                                 text-gray-900 placeholder-gray-400 
+                        className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                                 text-sm text-gray-900 placeholder-gray-400 
                                  focus:border-gray-400 focus:bg-white focus:outline-none
                                  transition-all duration-300"
                       />
                     </div>
 
                     {/* Phone Field */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-600" />
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5 text-gray-600" />
                         Phone Number
                       </label>
                       <input
@@ -206,17 +206,17 @@ const ContactSidebar = ({ isOpen, onClose }) => {
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder="+1 (555) 000-0000"
-                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl
-                                 text-gray-900 placeholder-gray-400 
+                        className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                                 text-sm text-gray-900 placeholder-gray-400 
                                  focus:border-gray-400 focus:bg-white focus:outline-none
                                  transition-all duration-300"
                       />
                     </div>
 
                     {/* Message Field */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 text-gray-600" />
+                    <div className="space-y-1">
+                      <label className="text-xs font-medium text-gray-700 flex items-center gap-1.5">
+                        <MessageSquare className="w-3.5 h-3.5 text-gray-600" />
                         Message
                       </label>
                       <textarea
@@ -226,8 +226,8 @@ const ContactSidebar = ({ isOpen, onClose }) => {
                         required
                         rows={2}
                         placeholder="Tell us about your project or inquiry..."
-                        className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl
-                                 text-gray-900 placeholder-gray-400 resize-none
+                        className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg
+                                 text-sm text-gray-900 placeholder-gray-400 resize-none
                                  focus:border-gray-400 focus:bg-white focus:outline-none
                                  transition-all duration-300"
                       />
@@ -237,27 +237,27 @@ const ContactSidebar = ({ isOpen, onClose }) => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full py-4 px-6 bg-gray-900 hover:bg-gray-800 
-                               rounded-xl font-semibold text-white
+                      className="w-full py-3 px-6 bg-gray-900 hover:bg-gray-800 
+                               rounded-lg font-semibold text-white text-sm
                                flex items-center justify-center gap-2
                                transition-all duration-300 
                                disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (
                         <>
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                           Sending...
                         </>
                       ) : (
                         <>
-                          <Send className="w-5 h-5" />
+                          <Send className="w-4 h-4" />
                           Send Message
                         </>
                       )}
                     </button>
 
                     {/* Privacy Note */}
-                    <p className="text-xs text-gray-500 text-center">
+                    <p className="text-[10px] text-gray-500 text-center leading-tight pt-1">
                       By submitting this form, you agree to our Privacy Policy and Terms of Service.
                     </p>
                   </motion.form>
@@ -266,8 +266,8 @@ const ContactSidebar = ({ isOpen, onClose }) => {
             </div>
 
             {/* Footer */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200 bg-gray-50">
-              <div className="flex items-center justify-between text-sm">
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50">
+              <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-500">Need immediate help?</span>
                 <a href="mailto:info@brainiaxsolutions.com" className="text-gray-900 hover:text-gray-600 font-medium transition-colors">
                   info@brainiaxsolutions.com
