@@ -1,9 +1,0 @@
-{
-  "name": "brainaix-workspace",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Workspace root for frontend and backend",
-  "scripts": {
-    "start:backend": "node backend/server.js"
-  }
-}
