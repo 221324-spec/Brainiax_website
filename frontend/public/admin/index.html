@@ -471,7 +471,8 @@
         const job = await api(`/api/jobs/${id}`);
         openJobModal(job);
       } catch (err) {
-        alert('Failed to load job');
+        console.error('Edit job error:', err);
+        alert('Failed to load job: ' + (err.message || err));
       }
     }
 
@@ -510,7 +511,8 @@
         loadJobs();
         loadDashboard();
       } catch (err) {
-        alert('Failed to delete job');
+        console.error('Delete job error:', err);
+        alert('Failed to delete job: ' + (err.message || err));
       }
     }
 
