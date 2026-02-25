@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npx vite build && node scripts/inject-api-url.js",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "devCommand": "npm run dev",
