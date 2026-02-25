@@ -20,9 +20,29 @@ const PORT = process.env.PORT || 5000
 
 // Middleware
 app.use(express.json())
-const clientOrigin = process.env.CLIENT_ORIGIN || '*'
+
+// CORS configuration - allow multiple origins
+const allowedOrigins = [
+  'http://localhost:3002',
+  'http://localhost:5173',
+  'http://localhost:5000',
+  'https://brainiaxitsolutions.vercel.app',
+  process.env.CLIENT_ORIGIN
+].filter(Boolean);
+
 app.use(cors({ 
-  origin: clientOrigin === '*' ? true : clientOrigin,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed list or if CLIENT_ORIGIN is '*'
+    if (allowedOrigins.includes(origin) || process.env.CLIENT_ORIGIN === '*') {
+      callback(null, true);
+    } else {
+      console.warn(`Blocked CORS request from origin: ${origin}`);
+      callback(null, false);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-token']
@@ -116,6 +136,23 @@ app.get('/health', (req, res) => {
 
 // Root
 app.get('/', (req, res) => res.send('Brainiax Backend is running'))
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development',
+    cors: {
+      allowedOrigins: [
+        'http://localhost:3002',
+        'http://localhost:5173',
+        'https://brainiaxitsolutions.vercel.app',
+        process.env.CLIENT_ORIGIN
+      ].filter(Boolean)
+    }
+  });
+});
 
 // Auto-create admin user on startup if it doesn't exist
 async function createDefaultAdmin() {
