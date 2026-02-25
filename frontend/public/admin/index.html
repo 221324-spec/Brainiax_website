@@ -20,10 +20,16 @@
       </div>
       <form onsubmit="handleLogin(event)">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Admin Token</label>
-          <input type="password" id="adminToken" required
+          <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+          <input type="text" id="username" required
                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                 placeholder="Enter your admin token">
+                 placeholder="Enter your username">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+          <input type="password" id="password" required
+                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                 placeholder="Enter your password">
         </div>
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-700 mb-2">API URL</label>
@@ -226,43 +232,64 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script>
     let API_URL = '';
-    let ADMIN_TOKEN = '';
+    let JWT_TOKEN = '';
 
     async function handleLogin(e) {
       e.preventDefault();
-      ADMIN_TOKEN = document.getElementById('adminToken').value;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
       API_URL = document.getElementById('apiUrl').value.replace(/\/$/, '');
 
       try {
-        const res = await fetch(`${API_URL}/api/admin/stats`, {
-          headers: { 'x-admin-token': ADMIN_TOKEN }
+        // Login with username/password to get JWT token
+        const loginRes = await fetch(`${API_URL}/api/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
         });
-        if (!res.ok) throw new Error('Invalid token');
+        
+        if (!loginRes.ok) {
+          const errorData = await loginRes.json().catch(() => ({ message: 'Login failed' }));
+          throw new Error(errorData.message || 'Invalid credentials');
+        }
 
-        localStorage.setItem('adminToken', ADMIN_TOKEN);
+        const { token } = await loginRes.json();
+        JWT_TOKEN = token;
+
+        // Test the token by fetching stats
+        const statsRes = await fetch(`${API_URL}/api/admin/stats`, {
+          headers: { 'Authorization': `Bearer ${JWT_TOKEN}` }
+        });
+        
+        if (!statsRes.ok) throw new Error('Authentication failed');
+
+        // Store credentials
+        localStorage.setItem('jwtToken', JWT_TOKEN);
         localStorage.setItem('apiUrl', API_URL);
 
+        // Hide login, show dashboard
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
         loadDashboard();
         setupRealtime();
       } catch (err) {
-        document.getElementById('loginError').textContent = 'Invalid token or server unreachable';
+        document.getElementById('loginError').textContent = err.message || 'Invalid credentials or server unreachable';
         document.getElementById('loginError').classList.remove('hidden');
       }
     }
 
     function logout() {
-      localStorage.removeItem('adminToken');
+      localStorage.removeItem('jwtToken');
       localStorage.removeItem('apiUrl');
+      JWT_TOKEN = null;
       location.reload();
     }
 
     window.onload = function() {
-      const savedToken = localStorage.getItem('adminToken');
+      const savedToken = localStorage.getItem('jwtToken');
       const savedUrl = localStorage.getItem('apiUrl');
       if (savedToken && savedUrl) {
-        ADMIN_TOKEN = savedToken;
+        JWT_TOKEN = savedToken;
         API_URL = savedUrl;
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
@@ -274,11 +301,21 @@
     async function api(endpoint, method = 'GET', body = null) {
       const opts = {
         method,
-        headers: { 'x-admin-token': ADMIN_TOKEN, 'Content-Type': 'application/json' }
+        headers: { 
+          'Authorization': `Bearer ${JWT_TOKEN}`,
+          'Content-Type': 'application/json' 
+        }
       };
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch(`${API_URL}${endpoint}`, opts);
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        if (res.status === 401) {
+          // Token expired or invalid, logout
+          logout();
+          throw new Error('Authentication expired');
+        }
+        throw new Error(`HTTP ${res.status}`);
+      }
       return res.json();
     }
 
@@ -524,7 +561,7 @@
       if (sse) { try { sse.close(); } catch (e) {} }
       if (poller) { clearInterval(poller); }
       try {
-        const url = `${API_URL}/api/admin/events?adminToken=${encodeURIComponent(ADMIN_TOKEN)}`;
+        const url = `${API_URL}/api/admin/events?adminToken=${encodeURIComponent(JWT_TOKEN)}`;
         sse = new EventSource(url);
         sse.onopen = () => { if (poller) { clearInterval(poller); poller = null; } };
         sse.onerror = () => { if (!poller) startPolling(); };
