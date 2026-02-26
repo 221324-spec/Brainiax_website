@@ -50,6 +50,7 @@ router.put('/:id', adminAuth, async (req, res) => {
     if (!job) return res.status(404).json({ message: 'Job not found' })
     res.json(job)
   } catch (err) {
+    console.error('Update job error:', err)
     res.status(400).json({ message: 'Invalid data', error: err.message })
   }
 })
@@ -61,6 +62,7 @@ router.delete('/:id', adminAuth, async (req, res) => {
     if (!job) return res.status(404).json({ message: 'Job not found' })
     res.json({ message: 'Deleted' })
   } catch (err) {
+    console.error('Delete job error:', err)
     res.status(500).json({ message: 'Server error' })
   }
 })

@@ -189,28 +189,29 @@ router.get('/stats', adminAuth, async (req, res) => {
 
 // ============ SETTINGS ============
 
-// GET /api/admin/settings/:key - get setting value (public for hiringBannerEnabled)
-router.get('/settings/:key', async (req, res) => {
-  try {
-    if (req.params.key === 'hiringBannerEnabled') {
+// GET /api/admin/settings/:key - get setting value
+// Public access for 'hiringBannerEnabled', protected for all others
+router.get('/settings/:key', async (req, res, next) => {
+  // Allow public access to hiringBannerEnabled
+  if (req.params.key === 'hiringBannerEnabled') {
+    try {
       const setting = await Setting.findOne({ key: req.params.key })
-      res.json({ value: setting ? setting.value : false })
-    } else {
-      res.status(404).json({ message: 'Setting not found' })
+      return res.json({ value: setting ? setting.value : false })
+    } catch (err) {
+      return res.status(500).json({ message: 'Server error' })
     }
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' })
   }
-})
-
-// GET /api/admin/settings/:key - get setting value (protected for others)
-router.get('/settings/:key', adminAuth, async (req, res) => {
-  try {
-    const setting = await Setting.findOne({ key: req.params.key })
-    res.json({ value: setting ? setting.value : null })
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' })
-  }
+  // All other settings require auth
+  adminAuth(req, res, () => {
+    (async () => {
+      try {
+        const setting = await Setting.findOne({ key: req.params.key })
+        res.json({ value: setting ? setting.value : null })
+      } catch (err) {
+        res.status(500).json({ message: 'Server error' })
+      }
+    })()
+  })
 })
 
 // PUT /api/admin/settings/:key - update setting value (protected)
@@ -227,8 +228,6 @@ router.put('/settings/:key', adminAuth, async (req, res) => {
     res.status(500).json({ message: 'Server error' })
   }
 })
-
-module.exports = router
 
 // ============ SERVER-SENT EVENTS (Realtime updates) ============
 // Keep SSE route at end to avoid interfering with JSON routes

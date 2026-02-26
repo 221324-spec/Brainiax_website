@@ -137,23 +137,6 @@ app.get('/health', (req, res) => {
 // Root
 app.get('/', (req, res) => res.send('Brainiax Backend is running'))
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV || 'development',
-    cors: {
-      allowedOrigins: [
-        'http://localhost:3002',
-        'http://localhost:5173',
-        'https://brainiaxitsolutions.vercel.app',
-        process.env.CLIENT_ORIGIN
-      ].filter(Boolean)
-    }
-  });
-});
-
 // Auto-create admin user on startup if it doesn't exist
 async function createDefaultAdmin() {
   try {
