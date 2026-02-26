@@ -18,6 +18,13 @@ const app = express()
 
 const PORT = process.env.PORT || 5000
 
+// Ensure uploads directory exists (Render has ephemeral disk)
+const uploadsDir = path.join(__dirname, 'uploads')
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true })
+  console.log('Created uploads directory:', uploadsDir)
+}
+
 // Middleware
 app.use(express.json())
 

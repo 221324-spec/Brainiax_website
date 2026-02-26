@@ -30,7 +30,18 @@ const upload = multer({
 })
 
 // POST /api/resumes - upload file and save metadata
-router.post('/', upload.single('resume'), async (req, res) => {
+router.post('/', (req, res, next) => {
+  upload.single('resume')(req, res, (err) => {
+    if (err) {
+      console.error('Multer upload error:', err)
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ message: 'File too large. Max size is 5MB.' })
+      }
+      return res.status(400).json({ message: err.message || 'File upload failed' })
+    }
+    next()
+  })
+}, async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' })
 
@@ -64,6 +75,7 @@ router.post('/', upload.single('resume'), async (req, res) => {
 
     res.status(201).json({ message: 'Application submitted', resumeUrl })
   } catch (err) {
+    console.error('Resume submission error:', err)
     res.status(500).json({ message: 'Upload failed', error: err.message })
   }
 })
