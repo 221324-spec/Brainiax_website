@@ -5,180 +5,208 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Brainiax Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/admin/admin.css">
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <!-- The rest of this file mirrors backend/admin.html functionality -->
+<body class="bg-gray-50">
+
+  <!-- ====== LOGIN SCREEN ====== -->
   <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+    <div class="login-card">
       <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-gray-900 rounded-xl flex items-center justify-center mx-auto mb-4">
-          <i class="fas fa-shield-alt text-white text-2xl"></i>
+        <div class="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <span class="text-white text-xl font-black">B</span>
         </div>
-        <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p class="text-gray-600 mt-2">Enter your admin token to continue</p>
-        <p class="text-xs text-gray-400 mt-1" id="apiUrlDisplay"></p>
+        <h1 class="text-2xl font-bold text-gray-900">Brainiax Admin</h1>
+        <p class="text-gray-500 mt-1 text-sm">Sign in to manage your dashboard</p>
+        <p class="text-xs text-gray-400 mt-2" id="apiUrlDisplay"></p>
       </div>
-      <form onsubmit="handleLogin(event)">
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-          <input type="text" id="username" required
-                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                 placeholder="Enter your username">
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="form-label">Username</label>
+          <input type="text" id="username" required placeholder="Enter username">
         </div>
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-          <input type="password" id="password" required
-                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                 placeholder="Enter your password">
+        <div>
+          <label class="form-label">Password</label>
+          <input type="password" id="password" required placeholder="Enter password">
         </div>
-        <div class="mb-4 hidden">
+        <div class="hidden">
           <input type="text" id="apiUrl" value="">
         </div>
-        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
-          <i class="fas fa-sign-in-alt mr-2"></i> Login
+        <button type="submit" class="login-btn mt-2">
+          <i class="fas fa-arrow-right mr-2"></i> Sign In
         </button>
-        <p id="loginError" class="text-red-500 text-xs mt-3 text-left hidden whitespace-pre-line"></p>
+        <p id="loginError" class="text-red-500 text-xs mt-2 hidden whitespace-pre-line"></p>
       </form>
     </div>
   </div>
 
+  <!-- ====== DASHBOARD ====== -->
   <div id="dashboard" class="hidden">
-    <header class="bg-white shadow-sm border-b">
-      <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <!-- Fixed header -->
+    <header>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
-            <i class="fas fa-chart-line text-white"></i>
+          <div class="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center">
+            <span class="text-white text-sm font-black">B</span>
           </div>
-          <h1 class="text-xl font-bold text-gray-900">Brainiax Admin</h1>
+          <div>
+            <h1 class="text-base font-bold text-gray-900 leading-tight">Brainiax Admin</h1>
+            <p class="text-[11px] text-gray-400 leading-tight" id="connectionStatus">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-green-500 mr-1"></span>
+              <span id="currentApiUrl"></span>
+            </p>
+          </div>
         </div>
-        <div class="flex items-center gap-4">
-          <span class="text-xs text-gray-500" id="connectionStatus">Connected to: <span id="currentApiUrl"></span></span>
-          <button onclick="logout()" class="text-gray-600 hover:text-gray-900 flex items-center gap-2">
+        <div class="flex items-center gap-3">
+          <button onclick="loadDashboard()" class="btn btn-icon text-blue" title="Refresh">
+            <i class="fas fa-sync-alt text-sm"></i>
+          </button>
+          <button onclick="logout()" class="btn btn-outline btn-sm">
             <i class="fas fa-sign-out-alt"></i> Logout
           </button>
         </div>
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto px-4 py-6">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-xl p-6 shadow-sm border">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-gray-500 text-sm">Active Jobs</p>
-              <p id="statActiveJobs" class="text-3xl font-bold text-gray-900">-</p>
-            </div>
-            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-              <i class="fas fa-briefcase text-blue-600"></i>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white rounded-xl p-6 shadow-sm border">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-gray-500 text-sm">Applications</p>
-              <p id="statResumes" class="text-3xl font-bold text-gray-900">-</p>
-            </div>
-            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-              <i class="fas fa-file-alt text-green-600"></i>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white rounded-xl p-6 shadow-sm border">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-gray-500 text-sm">Contacts</p>
-              <p id="statContacts" class="text-3xl font-bold text-gray-900">-</p>
-            </div>
-            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-              <i class="fas fa-envelope text-purple-600"></i>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white rounded-xl p-6 shadow-sm border">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-gray-500 text-sm">New Inquiries</p>
-              <p id="statNewContacts" class="text-3xl font-bold text-red-600">-</p>
-            </div>
-            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-              <i class="fas fa-bell text-red-600"></i>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Scrollable main area -->
+    <div id="dashboardMain">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
 
-      <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <div class="border-b flex">
-          <button onclick="showTab('jobs')" id="tabJobs" class="px-6 py-4 font-semibold text-gray-600 hover:text-blue-600 tab-active">
-            <i class="fas fa-briefcase mr-2"></i> Jobs
-          </button>
-          <button onclick="showTab('applications')" id="tabApplications" class="px-6 py-4 font-semibold text-gray-600 hover:text-blue-600">
-            <i class="fas fa-file-alt mr-2"></i> Applications
-          </button>
-          <button onclick="showTab('contacts')" id="tabContacts" class="px-6 py-4 font-semibold text-gray-600 hover:text-blue-600">
-            <i class="fas fa-envelope mr-2"></i> Contacts
-          </button>
+        <!-- Stat cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div class="stat-card">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Active Jobs</p>
+                <p id="statActiveJobs" class="text-3xl font-bold text-gray-900 mt-1">-</p>
+              </div>
+              <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center">
+                <i class="fas fa-briefcase text-blue-600"></i>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Applications</p>
+                <p id="statResumes" class="text-3xl font-bold text-gray-900 mt-1">-</p>
+              </div>
+              <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center">
+                <i class="fas fa-file-alt text-green-600"></i>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Contacts</p>
+                <p id="statContacts" class="text-3xl font-bold text-gray-900 mt-1">-</p>
+              </div>
+              <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center">
+                <i class="fas fa-envelope text-purple-600"></i>
+              </div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">New Inquiries</p>
+                <p id="statNewContacts" class="text-3xl font-bold text-red-600 mt-1">-</p>
+              </div>
+              <div class="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center">
+                <i class="fas fa-bell text-red-500"></i>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div id="panelJobs" class="p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-bold">Job Listings</h2>
-            <button onclick="openJobModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700">
-              <i class="fas fa-plus mr-2"></i> Add Job
+        <!-- Content card with tabs -->
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+          <!-- Tab bar -->
+          <div class="tab-bar">
+            <button onclick="showTab('jobs')" id="tabJobs" class="tab-btn tab-active">
+              <i class="fas fa-briefcase"></i> Jobs
+              <span id="tabBadgeJobs" class="tab-badge bg-blue-100 text-blue-700">-</span>
+            </button>
+            <button onclick="showTab('applications')" id="tabApplications" class="tab-btn">
+              <i class="fas fa-file-alt"></i> Applications
+              <span id="tabBadgeApps" class="tab-badge bg-green-100 text-green-700">-</span>
+            </button>
+            <button onclick="showTab('contacts')" id="tabContacts" class="tab-btn">
+              <i class="fas fa-envelope"></i> Contacts
+              <span id="tabBadgeContacts" class="tab-badge bg-purple-100 text-purple-700">-</span>
             </button>
           </div>
-          <div id="jobsList" class="space-y-3">
-            <p class="text-gray-500">Loading...</p>
+
+          <!-- JOBS panel -->
+          <div id="panelJobs" class="section-panel">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-lg font-bold text-gray-900">Job Listings</h2>
+              <button onclick="openJobModal()" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Job
+              </button>
+            </div>
+            <div id="jobsList" class="space-y-3">
+              <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading jobs...</p></div>
+            </div>
+          </div>
+
+          <!-- APPLICATIONS panel -->
+          <div id="panelApplications" class="section-panel hidden">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-lg font-bold text-gray-900">Job Applications</h2>
+            </div>
+            <div id="applicationsList" class="space-y-3">
+              <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading applications...</p></div>
+            </div>
+          </div>
+
+          <!-- CONTACTS panel -->
+          <div id="panelContacts" class="section-panel hidden">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-lg font-bold text-gray-900">Contact Submissions</h2>
+            </div>
+            <div id="contactsList" class="space-y-3">
+              <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading contacts...</p></div>
+            </div>
           </div>
         </div>
 
-        <div id="panelApplications" class="p-6 hidden">
-          <h2 class="text-lg font-bold mb-4">Job Applications</h2>
-          <div id="applicationsList" class="space-y-3">
-            <p class="text-gray-500">Loading...</p>
-          </div>
-        </div>
-
-        <div id="panelContacts" class="p-6 hidden">
-          <h2 class="text-lg font-bold mb-4">Contact Submissions</h2>
-          <div id="contactsList" class="space-y-3">
-            <p class="text-gray-500">Loading...</p>
-          </div>
-        </div>
       </div>
-    </div>
-  </div>
+    </div><!-- end dashboardMain -->
+  </div><!-- end dashboard -->
 
-  <div id="jobModal" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-      <div class="p-6 border-b flex items-center justify-between">
-        <h3 id="jobModalTitle" class="text-xl font-bold">Add New Job</h3>
-        <button onclick="closeJobModal()" class="text-gray-400 hover:text-gray-600">
-          <i class="fas fa-times text-xl"></i>
+  <!-- ====== JOB MODAL ====== -->
+  <div id="jobModal" class="modal">
+    <div class="modal-backdrop" onclick="closeJobModal()"></div>
+    <div class="modal-content max-w-2xl">
+      <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+        <h3 id="jobModalTitle" class="text-lg font-bold text-gray-900">Add New Job</h3>
+        <button onclick="closeJobModal()" class="btn btn-icon text-red">
+          <i class="fas fa-times"></i>
         </button>
       </div>
       <form onsubmit="saveJob(event)" class="p-6 space-y-4">
         <input type="hidden" id="jobId">
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Job Title *</label>
-            <input type="text" id="jobTitle" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+            <label class="form-label">Job Title *</label>
+            <input type="text" id="jobTitle" required class="form-input" placeholder="e.g. Software Engineer">
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
-            <input type="text" id="jobDepartment" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+            <label class="form-label">Department</label>
+            <input type="text" id="jobDepartment" class="form-input" placeholder="e.g. Engineering">
           </div>
         </div>
         <div class="grid md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-            <input type="text" id="jobLocation" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+            <label class="form-label">Location</label>
+            <input type="text" id="jobLocation" class="form-input" placeholder="e.g. Islamabad">
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Job Type</label>
-            <select id="jobType" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+            <label class="form-label">Job Type</label>
+            <select id="jobType" class="form-input">
               <option value="Full-time">Full-time</option>
               <option value="Part-time">Part-time</option>
               <option value="Contract">Contract</option>
@@ -187,30 +215,30 @@
           </div>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Salary Range</label>
-          <input type="text" id="jobSalary" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g. $50,000 - $70,000">
+          <label class="form-label">Salary Range</label>
+          <input type="text" id="jobSalary" class="form-input" placeholder="e.g. $50,000 - $70,000">
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-          <textarea id="jobDescription" rows="3" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+          <label class="form-label">Description</label>
+          <textarea id="jobDescription" rows="3" class="form-input" placeholder="Job description..."></textarea>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Requirements (one per line)</label>
-          <textarea id="jobRequirements" rows="4" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Excellent communication skills&#10;2+ years experience&#10;..."></textarea>
+          <label class="form-label">Requirements (one per line)</label>
+          <textarea id="jobRequirements" rows="4" class="form-input" placeholder="Excellent communication skills&#10;2+ years experience&#10;..."></textarea>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Benefits (one per line)</label>
-          <textarea id="jobBenefits" rows="3" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Health insurance&#10;Paid time off&#10;..."></textarea>
+          <label class="form-label">Benefits (one per line)</label>
+          <textarea id="jobBenefits" rows="3" class="form-input" placeholder="Health insurance&#10;Paid time off&#10;..."></textarea>
         </div>
         <div class="flex items-center gap-2">
-          <input type="checkbox" id="jobIsActive" checked class="w-4 h-4 text-blue-600 rounded">
-          <label for="jobIsActive" class="text-sm text-gray-700">Active (visible on website)</label>
+          <input type="checkbox" id="jobIsActive" checked class="w-4 h-4 text-blue-600 rounded border-gray-300">
+          <label for="jobIsActive" class="text-sm text-gray-700 font-medium">Active (visible on website)</label>
         </div>
-        <div class="flex gap-3 pt-4">
-          <button type="submit" class="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">
-            <i class="fas fa-save mr-2"></i> Save Job
+        <div class="flex gap-3 pt-4 border-t border-gray-100">
+          <button type="submit" class="btn btn-primary flex-1 justify-center py-3">
+            <i class="fas fa-save"></i> Save Job
           </button>
-          <button type="button" onclick="closeJobModal()" class="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50">
+          <button type="button" onclick="closeJobModal()" class="btn btn-outline px-6 py-3">
             Cancel
           </button>
         </div>
@@ -218,106 +246,86 @@
     </div>
   </div>
 
-  <div id="detailModal" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-      <div class="p-6 border-b flex items-center justify-between">
-        <h3 id="detailModalTitle" class="text-xl font-bold">Details</h3>
-        <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600">
-          <i class="fas fa-times text-xl"></i>
+  <!-- ====== DETAIL MODAL ====== -->
+  <div id="detailModal" class="modal">
+    <div class="modal-backdrop" onclick="closeDetailModal()"></div>
+    <div class="modal-content max-w-lg">
+      <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+        <h3 id="detailModalTitle" class="text-lg font-bold text-gray-900">Details</h3>
+        <button onclick="closeDetailModal()" class="btn btn-icon text-red">
+          <i class="fas fa-times"></i>
         </button>
       </div>
       <div id="detailModalContent" class="p-6"></div>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <!-- ====== TOAST CONTAINER ====== -->
+  <div id="toastContainer"></div>
+
   <script>
     let API_URL = '';
     let JWT_TOKEN = '';
 
-    // Auto-configure API URL
+    /* ============ TOAST ============ */
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      el.className = `toast toast-${type}`;
+      el.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`;
+      container.appendChild(el);
+      setTimeout(() => { el.style.animation = 'toastOut .3s forwards'; setTimeout(() => el.remove(), 300); }, 3000);
+    }
+
+    /* ============ API URL setup ============ */
     function setupApiUrl() {
-      // Try to get from environment variable first (set in Vercel)
-      const envApiUrl = '__VITE_API_BASE_URL__'; // Will be replaced at build time
-      
+      const envApiUrl = '__VITE_API_BASE_URL__';
       if (envApiUrl && envApiUrl !== '__VITE_API_BASE_URL__') {
         API_URL = envApiUrl;
       } else if (localStorage.getItem('apiUrl')) {
-        // Use previously saved URL
         API_URL = localStorage.getItem('apiUrl');
       } else {
-        // Production fallback - your actual Render backend URL
         API_URL = 'https://brainiax-website.onrender.com';
       }
-      
-      // Remove trailing slash
       API_URL = API_URL.replace(/\/$/, '');
-      
-      // Set the hidden field
       document.getElementById('apiUrl').value = API_URL;
-      
-      // Display API URL to user
-      const displayEl = document.getElementById('apiUrlDisplay');
-      if (displayEl) {
-        displayEl.textContent = `Backend: ${API_URL}`;
-      }
-      
-      console.log('Using API URL:', API_URL);
+      const d = document.getElementById('apiUrlDisplay');
+      if (d) d.textContent = `Backend: ${API_URL}`;
     }
 
+    /* ============ LOGIN / AUTH ============ */
     async function handleLogin(e) {
       e.preventDefault();
-      
-      // Auto-configure API URL
       setupApiUrl();
-      
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
-
       try {
-        // Login with username/password to get JWT token
         const loginRes = await fetch(`${API_URL}/api/admin/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password })
         });
-        
         if (!loginRes.ok) {
-          const errorData = await loginRes.json().catch(() => ({ message: 'Login failed' }));
-          throw new Error(errorData.message || 'Invalid credentials');
+          const err = await loginRes.json().catch(() => ({ message: 'Login failed' }));
+          throw new Error(err.message || 'Invalid credentials');
         }
-
         const { token } = await loginRes.json();
         JWT_TOKEN = token;
-
-        // Test the token by fetching stats
-        const statsRes = await fetch(`${API_URL}/api/admin/stats`, {
-          headers: { 'Authorization': `Bearer ${JWT_TOKEN}` }
-        });
-        
+        const statsRes = await fetch(`${API_URL}/api/admin/stats`, { headers: { 'Authorization': `Bearer ${JWT_TOKEN}` } });
         if (!statsRes.ok) throw new Error('Authentication failed');
-
-        // Store credentials
         localStorage.setItem('jwtToken', JWT_TOKEN);
         localStorage.setItem('apiUrl', API_URL);
-
-        // Hide login, show dashboard
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
-        
-        // Display API URL in header
         document.getElementById('currentApiUrl').textContent = API_URL;
-        
         loadDashboard();
         setupRealtime();
       } catch (err) {
-        console.error('Login error:', err);
-        console.error('API URL used:', API_URL);
-        let errorMsg = err.message || 'Login failed';
+        let msg = err.message || 'Login failed';
         if (err.message === 'Failed to fetch') {
-          errorMsg = `Cannot connect to backend at ${API_URL}. Please check:\n1. Backend is deployed and running\n2. Backend URL is correct\n3. CORS is configured`;
+          msg = `Cannot connect to ${API_URL}.\n1. Is the backend running?\n2. CORS configured?`;
         }
-        document.getElementById('loginError').textContent = errorMsg;
+        document.getElementById('loginError').textContent = msg;
         document.getElementById('loginError').classList.remove('hidden');
       }
     }
@@ -331,119 +339,102 @@
 
     window.onload = function() {
       setupApiUrl();
-      
-      const savedToken = localStorage.getItem('jwtToken');
-      const savedUrl = localStorage.getItem('apiUrl');
-      if (savedToken && savedUrl) {
-        JWT_TOKEN = savedToken;
-        API_URL = savedUrl;
+      const t = localStorage.getItem('jwtToken');
+      const u = localStorage.getItem('apiUrl');
+      if (t && u) {
+        JWT_TOKEN = t; API_URL = u;
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
-        
-        // Display API URL in header
         document.getElementById('currentApiUrl').textContent = API_URL;
-        
         loadDashboard();
         setupRealtime();
       }
     };
 
+    /* ============ API HELPER ============ */
     async function api(endpoint, method = 'GET', body = null) {
       const opts = {
         method,
-        headers: { 
-          'Authorization': `Bearer ${JWT_TOKEN}`,
-          'Content-Type': 'application/json' 
-        }
+        headers: { 'Authorization': `Bearer ${JWT_TOKEN}`, 'Content-Type': 'application/json' }
       };
       if (body) opts.body = JSON.stringify(body);
-      
-      try {
-        const res = await fetch(`${API_URL}${endpoint}`, opts);
-        if (!res.ok) {
-          if (res.status === 401) {
-            // Token expired or invalid, logout
-            logout();
-            throw new Error('Authentication expired');
-          }
-          const errorText = await res.text().catch(() => 'Unknown error');
-          console.error(`API Error ${res.status}:`, errorText);
-          throw new Error(`HTTP ${res.status}: ${errorText}`);
-        }
-        return res.json();
-      } catch (error) {
-        console.error('API Request Failed:', {
-          endpoint,
-          method,
-          apiUrl: API_URL,
-          error: error.message
-        });
-        
-        // Show user-friendly error
-        if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
-          alert(`Cannot connect to backend at ${API_URL}\n\nPlease check:\n1. Backend is running\n2. CORS is configured\n3. Network connection`);
-        }
-        throw error;
+      const res = await fetch(`${API_URL}${endpoint}`, opts);
+      if (!res.ok) {
+        if (res.status === 401) { logout(); throw new Error('Session expired'); }
+        const txt = await res.text().catch(() => 'Unknown error');
+        throw new Error(`HTTP ${res.status}: ${txt}`);
       }
+      return res.json();
     }
 
+    /* ============ DASHBOARD ============ */
     async function loadDashboard() {
       try {
-        console.log('Loading dashboard from:', API_URL);
         const stats = await api('/api/admin/stats');
         document.getElementById('statActiveJobs').textContent = stats.activeJobs;
         document.getElementById('statResumes').textContent = stats.totalResumes;
         document.getElementById('statContacts').textContent = stats.totalContacts;
         document.getElementById('statNewContacts').textContent = stats.newContacts;
-
+        document.getElementById('tabBadgeJobs').textContent = stats.activeJobs;
+        document.getElementById('tabBadgeApps').textContent = stats.totalResumes;
+        document.getElementById('tabBadgeContacts').textContent = stats.totalContacts;
         loadJobs();
         loadApplications();
         loadContacts();
       } catch (err) {
-        console.error('Dashboard load error:', err);
-        alert('Failed to load dashboard. Check console for details.');
+        showToast('Failed to load dashboard', 'error');
       }
     }
 
+    /* ============ TABS ============ */
     function showTab(tab) {
       ['Jobs', 'Applications', 'Contacts'].forEach(t => {
-        document.getElementById(`tab${t}`).classList.remove('tab-active');
-        document.getElementById(`panel${t}`).classList.add('hidden');
+        document.getElementById('tab' + t).classList.remove('tab-active');
+        document.getElementById('panel' + t).classList.add('hidden');
       });
-      document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('tab-active');
-      document.getElementById(`panel${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
+      const name = tab.charAt(0).toUpperCase() + tab.slice(1);
+      document.getElementById('tab' + name).classList.add('tab-active');
+      document.getElementById('panel' + name).classList.remove('hidden');
     }
 
+    /* ============ JOBS ============ */
     async function loadJobs() {
       try {
         const jobs = await api('/api/admin/jobs');
-        const container = document.getElementById('jobsList');
-        if (jobs.length === 0) {
-          container.innerHTML = '<p class="text-gray-500">No jobs posted yet.</p>';
+        const el = document.getElementById('jobsList');
+        if (!jobs.length) {
+          el.innerHTML = '<div class="empty-state"><i class="fas fa-briefcase"></i><p>No jobs posted yet. Click "Add Job" to get started.</p></div>';
           return;
         }
-        container.innerHTML = jobs.map(job => `
-          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border ${!job.isActive ? 'opacity-60' : ''}">
-            <div>
-              <h4 class="font-semibold text-gray-900">${job.title}</h4>
-              <p class="text-sm text-gray-500">${job.department || ''} • ${job.location || ''} • ${job.type || ''}</p>
-              <p class="text-xs text-gray-400 mt-1">${job.applicationsCount || 0} applications</p>
+        el.innerHTML = jobs.map(job => `
+          <div class="list-item ${!job.isActive ? 'inactive' : ''}">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h4 class="font-semibold text-gray-900 text-sm">${job.title}</h4>
+                <span class="badge ${job.isActive ? 'badge-active' : 'badge-inactive'}">
+                  ${job.isActive ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">
+                ${[job.department, job.location, job.type].filter(Boolean).join(' &bull; ')}
+              </p>
+              <p class="text-xs text-gray-400 mt-0.5">
+                <i class="fas fa-users text-[10px] mr-1"></i>${job.applicationsCount || 0} applications
+                &bull; Posted ${new Date(job.postedDate).toLocaleDateString()}
+              </p>
             </div>
-            <div class="flex items-center gap-2">
-              <span class="px-2 py-1 text-xs rounded-full ${job.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}">
-                ${job.isActive ? 'Active' : 'Inactive'}
-              </span>
-              <button onclick="editJob('${job._id}')" class="p-2 text-blue-600 hover:bg-blue-50 rounded">
-                <i class="fas fa-edit"></i>
+            <div class="flex items-center gap-1 flex-shrink-0">
+              <button onclick="editJob('${job._id}')" class="btn btn-icon text-blue" title="Edit">
+                <i class="fas fa-pen text-xs"></i>
               </button>
-              <button onclick="deleteJob('${job._id}')" class="p-2 text-red-600 hover:bg-red-50 rounded">
-                <i class="fas fa-trash"></i>
+              <button onclick="deleteJob('${job._id}')" class="btn btn-icon text-red" title="Delete">
+                <i class="fas fa-trash text-xs"></i>
               </button>
             </div>
           </div>
         `).join('');
       } catch (err) {
-        console.error('Jobs load error:', err);
+        document.getElementById('jobsList').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load jobs</p></div>';
       }
     }
 
@@ -461,18 +452,14 @@
       document.getElementById('jobIsActive').checked = job?.isActive !== false;
       document.getElementById('jobModal').classList.add('active');
     }
-
-    function closeJobModal() {
-      document.getElementById('jobModal').classList.remove('active');
-    }
+    function closeJobModal() { document.getElementById('jobModal').classList.remove('active'); }
 
     async function editJob(id) {
       try {
-        const job = await api(`/api/jobs/${id}`);
+        const job = await api('/api/jobs/' + id);
         openJobModal(job);
       } catch (err) {
-        console.error('Edit job error:', err);
-        alert('Failed to load job: ' + (err.message || err));
+        showToast('Failed to load job', 'error');
       }
     }
 
@@ -491,147 +478,154 @@
         isActive: document.getElementById('jobIsActive').checked
       };
       try {
-        if (id) {
-          await api(`/api/jobs/${id}`, 'PUT', data);
-        } else {
-          await api('/api/jobs', 'POST', data);
-        }
+        if (id) { await api('/api/jobs/' + id, 'PUT', data); }
+        else    { await api('/api/jobs', 'POST', data); }
         closeJobModal();
+        showToast(id ? 'Job updated!' : 'Job created!');
         loadJobs();
         loadDashboard();
       } catch (err) {
-        alert('Failed to save job: ' + err.message);
+        showToast('Failed to save job: ' + err.message, 'error');
       }
     }
 
     async function deleteJob(id) {
-      if (!confirm('Are you sure you want to delete this job?')) return;
+      if (!confirm('Delete this job permanently?')) return;
       try {
-        await api(`/api/jobs/${id}`, 'DELETE');
+        await api('/api/jobs/' + id, 'DELETE');
+        showToast('Job deleted');
         loadJobs();
         loadDashboard();
       } catch (err) {
-        console.error('Delete job error:', err);
-        alert('Failed to delete job: ' + (err.message || err));
+        showToast('Failed to delete job', 'error');
       }
     }
 
+    /* ============ APPLICATIONS ============ */
     async function loadApplications() {
       try {
         const data = await api('/api/admin/resumes?limit=50');
-        const container = document.getElementById('applicationsList');
-        if (data.items.length === 0) {
-          container.innerHTML = '<p class="text-gray-500">No applications yet.</p>';
+        const el = document.getElementById('applicationsList');
+        if (!data.items.length) {
+          el.innerHTML = '<div class="empty-state"><i class="fas fa-file-alt"></i><p>No applications received yet.</p></div>';
           return;
         }
-        container.innerHTML = data.items.map(app => `
-          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
-            <div>
-              <h4 class="font-semibold text-gray-900">${app.name}</h4>
-              <p class="text-sm text-gray-500">${app.email} • ${app.phone || "No phone"}</p>
-              <p class="text-sm text-blue-600">${app.position || "General Application"}</p>
-              <p class="text-xs text-gray-400 mt-1">${new Date(app.createdAt).toLocaleString()}</p>
+        el.innerHTML = data.items.map(app => `
+          <div class="list-item">
+            <div class="min-w-0 flex-1">
+              <h4 class="font-semibold text-gray-900 text-sm">${app.name}</h4>
+              <p class="text-xs text-gray-500 mt-0.5">
+                <i class="fas fa-envelope text-[10px] mr-1"></i>${app.email}
+                ${app.phone ? ` &bull; <i class="fas fa-phone text-[10px] mr-1"></i>${app.phone}` : ''}
+              </p>
+              <p class="text-xs text-blue-600 font-medium mt-0.5">${app.position || 'General Application'}</p>
+              <p class="text-xs text-gray-400 mt-0.5">${new Date(app.createdAt).toLocaleString()}</p>
             </div>
-            <div class="flex items-center gap-2">
-              <a href="${API_URL}${app.resumeUrl}" target="_blank" class="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700">
-                <i class="fas fa-download mr-1"></i> Resume
+            <div class="flex items-center gap-1 flex-shrink-0">
+              <a href="${API_URL}${app.resumeUrl}" target="_blank" class="btn btn-primary btn-sm" title="Download Resume">
+                <i class="fas fa-download"></i> Resume
               </a>
-              <a href="mailto:${app.email}" class="p-2 text-green-600 hover:bg-green-50 rounded">
-                <i class="fas fa-envelope"></i>
+              <a href="mailto:${app.email}" class="btn btn-icon text-green" title="Email">
+                <i class="fas fa-envelope text-xs"></i>
               </a>
-              <button onclick="deleteApplication('${app._id}')" class="p-2 text-red-600 hover:bg-red-50 rounded">
-                <i class="fas fa-trash"></i>
+              <button onclick="deleteApplication('${app._id}')" class="btn btn-icon text-red" title="Delete">
+                <i class="fas fa-trash text-xs"></i>
               </button>
             </div>
           </div>
         `).join('');
       } catch (err) {
-        console.error('Applications load error:', err);
+        document.getElementById('applicationsList').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load applications</p></div>';
       }
     }
 
     async function deleteApplication(id) {
-      if (!confirm('Are you sure you want to delete this application?')) return;
+      if (!confirm('Delete this application?')) return;
       try {
-        await api(`/api/admin/resumes/${id}`, 'DELETE');
+        await api('/api/admin/resumes/' + id, 'DELETE');
+        showToast('Application deleted');
         loadApplications();
         loadDashboard();
       } catch (err) {
-        alert('Failed to delete application');
+        showToast('Failed to delete application', 'error');
       }
     }
 
+    /* ============ CONTACTS ============ */
     async function loadContacts() {
       try {
         const data = await api('/api/admin/contacts?limit=50');
-        const container = document.getElementById('contactsList');
-        if (data.items.length === 0) {
-          container.innerHTML = '<p class="text-gray-500">No contact submissions yet.</p>';
+        const el = document.getElementById('contactsList');
+        if (!data.items.length) {
+          el.innerHTML = '<div class="empty-state"><i class="fas fa-envelope"></i><p>No contact submissions yet.</p></div>';
           return;
         }
-        container.innerHTML = data.items.map(c => `
-          <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <h4 class="font-semibold text-gray-900">${c.name}</h4>
-                <span class="px-2 py-0.5 text-xs rounded-full ${c.status === "new" ? "bg-red-100 text-red-700" : c.status === "contacted" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}">${c.status}</span>
+        el.innerHTML = data.items.map(c => `
+          <div class="list-item">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h4 class="font-semibold text-gray-900 text-sm">${c.name}</h4>
+                <span class="badge badge-${c.status || 'new'}">${c.status || 'new'}</span>
               </div>
-              <p class="text-sm text-gray-500">${c.email} • ${c.phone || "No phone"}</p>
-              ${c.company ? `<p class="text-sm text-gray-600">${c.company}</p>` : ""}
-              ${c.message ? `<p class="text-sm text-gray-700 mt-2 line-clamp-2">${c.message}</p>` : ""}
+              <p class="text-xs text-gray-500 mt-0.5">
+                <i class="fas fa-envelope text-[10px] mr-1"></i>${c.email}
+                ${c.phone ? ` &bull; <i class="fas fa-phone text-[10px] mr-1"></i>${c.phone}` : ''}
+              </p>
+              ${c.company ? `<p class="text-xs text-gray-600 mt-0.5"><i class="fas fa-building text-[10px] mr-1"></i>${c.company}</p>` : ''}
+              ${c.message ? `<p class="text-xs text-gray-600 mt-1.5 line-clamp-2 bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">${c.message}</p>` : ''}
               <p class="text-xs text-gray-400 mt-1">${new Date(c.createdAt).toLocaleString()}</p>
             </div>
-            <div class="flex items-center gap-2 ml-4">
-              <select onchange="updateContactStatus('${c._id}', this.value)" class="text-sm border rounded px-2 py-1">
-                <option value="new" ${c.status === "new" ? "selected" : ""}>New</option>
-                <option value="contacted" ${c.status === "contacted" ? "selected" : ""}>Contacted</option>
-                <option value="resolved" ${c.status === "resolved" ? "selected" : ""}>Resolved</option>
+            <div class="flex items-center gap-1 flex-shrink-0 ml-3">
+              <select onchange="updateContactStatus('${c._id}', this.value)" class="status-select">
+                <option value="new" ${c.status === 'new' ? 'selected' : ''}>New</option>
+                <option value="contacted" ${c.status === 'contacted' ? 'selected' : ''}>Contacted</option>
+                <option value="resolved" ${c.status === 'resolved' ? 'selected' : ''}>Resolved</option>
               </select>
-              <a href="mailto:${c.email}" class="p-2 text-green-600 hover:bg-green-50 rounded">
-                <i class="fas fa-envelope"></i>
+              <a href="mailto:${c.email}" class="btn btn-icon text-green" title="Email">
+                <i class="fas fa-envelope text-xs"></i>
               </a>
-              ${c.phone ? `<a href="tel:${c.phone}" class="p-2 text-blue-600 hover:bg-blue-50 rounded"><i class="fas fa-phone"></i></a>` : ""}
-              <button onclick="deleteContact('${c._id}')" class="p-2 text-red-600 hover:bg-red-50 rounded">
-                <i class="fas fa-trash"></i>
+              ${c.phone ? `<a href="tel:${c.phone}" class="btn btn-icon text-blue" title="Call"><i class="fas fa-phone text-xs"></i></a>` : ''}
+              <button onclick="deleteContact('${c._id}')" class="btn btn-icon text-red" title="Delete">
+                <i class="fas fa-trash text-xs"></i>
               </button>
             </div>
           </div>
         `).join('');
       } catch (err) {
-        console.error('Contacts load error:', err);
+        document.getElementById('contactsList').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load contacts</p></div>';
       }
     }
 
     async function updateContactStatus(id, status) {
       try {
-        await api(`/api/admin/contacts/${id}`, 'PUT', { status });
+        await api('/api/admin/contacts/' + id, 'PUT', { status });
+        showToast('Status updated');
         loadContacts();
         loadDashboard();
       } catch (err) {
-        alert('Failed to update status');
+        showToast('Failed to update status', 'error');
       }
     }
 
     async function deleteContact(id) {
-      if (!confirm('Are you sure you want to delete this contact?')) return;
+      if (!confirm('Delete this contact?')) return;
       try {
-        await api(`/api/admin/contacts/${id}`, 'DELETE');
+        await api('/api/admin/contacts/' + id, 'DELETE');
+        showToast('Contact deleted');
         loadContacts();
         loadDashboard();
       } catch (err) {
-        alert('Failed to delete contact');
+        showToast('Failed to delete contact', 'error');
       }
     }
 
-    function closeDetailModal() {
-      document.getElementById('detailModal').classList.remove('active');
-    }
+    function closeDetailModal() { document.getElementById('detailModal').classList.remove('active'); }
 
-    let sse;
-    let poller;
+    /* ============ REALTIME ============ */
+    let sse, poller;
     function setupRealtime() {
-      if (sse) { try { sse.close(); } catch (e) {} }
-      if (poller) { clearInterval(poller); }
+      if (sse) try { sse.close(); } catch(e) {}
+      if (poller) clearInterval(poller);
       try {
         const url = `${API_URL}/api/admin/events?adminToken=${encodeURIComponent(JWT_TOKEN)}`;
         sse = new EventSource(url);
@@ -640,18 +634,20 @@
         sse.addEventListener('job-change', () => { loadJobs(); loadDashboard(); });
         sse.addEventListener('resume-change', () => { loadApplications(); loadDashboard(); });
         sse.addEventListener('contact-change', () => { loadContacts(); loadDashboard(); });
-      } catch (e) { startPolling(); }
+      } catch(e) { startPolling(); }
+
       function startPolling() {
         if (poller) return;
         poller = setInterval(() => {
-          loadJobs();
-          loadApplications();
-          loadContacts();
-          api('/api/admin/stats').then(stats => {
-            document.getElementById('statActiveJobs').textContent = stats.activeJobs;
-            document.getElementById('statResumes').textContent = stats.totalResumes;
-            document.getElementById('statContacts').textContent = stats.totalContacts;
-            document.getElementById('statNewContacts').textContent = stats.newContacts;
+          loadJobs(); loadApplications(); loadContacts();
+          api('/api/admin/stats').then(s => {
+            document.getElementById('statActiveJobs').textContent = s.activeJobs;
+            document.getElementById('statResumes').textContent = s.totalResumes;
+            document.getElementById('statContacts').textContent = s.totalContacts;
+            document.getElementById('statNewContacts').textContent = s.newContacts;
+            document.getElementById('tabBadgeJobs').textContent = s.activeJobs;
+            document.getElementById('tabBadgeApps').textContent = s.totalResumes;
+            document.getElementById('tabBadgeContacts').textContent = s.totalContacts;
           }).catch(()=>{});
         }, 15000);
       }
