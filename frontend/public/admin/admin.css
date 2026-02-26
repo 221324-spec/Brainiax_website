@@ -29,27 +29,39 @@ html, body {
   box-shadow: 0 1px 3px rgba(0,0,0,.04);
 }
 
-/* Scrollable main area */
+/* Main area – non-scrolling flex column */
 #dashboardMain {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 16px 24px;
+  gap: 16px;
 }
 
-/* Custom scrollbar */
-#dashboardMain::-webkit-scrollbar {
-  width: 6px;
+/* Stat row – never scrolls */
+.stat-row {
+  flex-shrink: 0;
 }
-#dashboardMain::-webkit-scrollbar-track {
-  background: transparent;
+
+/* Content card – fills remaining height */
+.content-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
 }
-#dashboardMain::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 8px;
-}
-#dashboardMain::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+
+/* Panels container */
+.panels-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ============ Stat cards ============ */
@@ -71,8 +83,7 @@ html, body {
   gap: 0;
   border-bottom: 2px solid #f1f5f9;
   background: #fff;
-  position: sticky;
-  top: 0;
+  flex-shrink: 0;
   z-index: 10;
 }
 
@@ -124,7 +135,24 @@ html, body {
 /* ============ Section panels ============ */
 .section-panel {
   padding: 24px;
-  min-height: 300px;
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for panels */
+.section-panel::-webkit-scrollbar {
+  width: 6px;
+}
+.section-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+.section-panel::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+}
+.section-panel::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* ============ List items ============ */
@@ -381,6 +409,74 @@ html, body {
   to   { opacity: 0; transform: translateY(-12px); }
 }
 
+/* ============ Application folders ============ */
+.app-folder {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color .15s;
+}
+.app-folder:hover {
+  border-color: #cbd5e1;
+}
+.app-folder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #f8fafc;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s;
+}
+.app-folder-header:hover {
+  background: #f1f5f9;
+}
+.app-folder-icon {
+  color: #f59e0b;
+  font-size: 18px;
+  transition: color .15s;
+}
+.app-folder.open .app-folder-icon {
+  color: #d97706;
+}
+.app-folder-arrow {
+  font-size: 12px;
+  color: #94a3b8;
+  transition: transform .2s;
+}
+.app-folder.open .app-folder-arrow {
+  transform: rotate(180deg);
+}
+.app-folder-content {
+  display: none;
+  border-top: 1px solid #e2e8f0;
+}
+.app-folder.open .app-folder-content {
+  display: block;
+}
+.app-folder-content .list-item {
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+}
+.app-folder-content .list-item:last-child {
+  border-bottom: none;
+}
+.app-folder-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 11px;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
 /* ============ Responsive ============ */
 @media (max-width: 640px) {
   .tab-btn { padding: 12px 14px; font-size: 13px; }
@@ -388,4 +484,6 @@ html, body {
   .list-item { flex-direction: column; align-items: flex-start; gap: 12px; }
   .list-item > div:last-child { align-self: flex-end; }
   .stat-card { padding: 16px; }
+  #dashboardMain { padding: 12px; gap: 12px; }
+  .app-folder-header { padding: 12px 14px; }
 }

@@ -45,7 +45,7 @@
   <div id="dashboard" class="hidden">
     <!-- Fixed header -->
     <header>
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div class="px-6 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center">
             <span class="text-white text-sm font-black">B</span>
@@ -69,12 +69,12 @@
       </div>
     </header>
 
-    <!-- Scrollable main area -->
+    <!-- Dashboard main area -->
     <div id="dashboardMain">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
 
         <!-- Stat cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="stat-row">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="stat-card">
             <div class="flex items-center justify-between">
               <div>
@@ -120,9 +120,10 @@
             </div>
           </div>
         </div>
+        </div>
 
         <!-- Content card with tabs -->
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="content-card">
           <!-- Tab bar -->
           <div class="tab-bar">
             <button onclick="showTab('jobs')" id="tabJobs" class="tab-btn tab-active">
@@ -138,6 +139,9 @@
               <span id="tabBadgeContacts" class="tab-badge bg-purple-100 text-purple-700">-</span>
             </button>
           </div>
+
+          <!-- Section panels (scrollable) -->
+          <div class="panels-container">
 
           <!-- JOBS panel -->
           <div id="panelJobs" class="section-panel">
@@ -157,7 +161,7 @@
             <div class="flex items-center justify-between mb-5">
               <h2 class="text-lg font-bold text-gray-900">Job Applications</h2>
             </div>
-            <div id="applicationsList" class="space-y-3">
+            <div id="applicationsList" class="space-y-4">
               <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading applications...</p></div>
             </div>
           </div>
@@ -171,9 +175,9 @@
               <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading contacts...</p></div>
             </div>
           </div>
-        </div>
+          </div><!-- end panels-container -->
+        </div><!-- end content-card -->
 
-      </div>
     </div><!-- end dashboardMain -->
   </div><!-- end dashboard -->
 
@@ -501,42 +505,97 @@
       }
     }
 
-    /* ============ APPLICATIONS ============ */
+    /* ============ APPLICATIONS (grouped by job) ============ */
     async function loadApplications() {
       try {
-        const data = await api('/api/admin/resumes?limit=50');
+        const [data, jobs] = await Promise.all([
+          api('/api/admin/resumes?limit=200'),
+          api('/api/admin/jobs')
+        ]);
         const el = document.getElementById('applicationsList');
         if (!data.items.length) {
           el.innerHTML = '<div class="empty-state"><i class="fas fa-file-alt"></i><p>No applications received yet.</p></div>';
           return;
         }
-        el.innerHTML = data.items.map(app => `
-          <div class="list-item">
-            <div class="min-w-0 flex-1">
-              <h4 class="font-semibold text-gray-900 text-sm">${app.name}</h4>
-              <p class="text-xs text-gray-500 mt-0.5">
-                <i class="fas fa-envelope text-[10px] mr-1"></i>${app.email}
-                ${app.phone ? ` &bull; <i class="fas fa-phone text-[10px] mr-1"></i>${app.phone}` : ''}
-              </p>
-              <p class="text-xs text-blue-600 font-medium mt-0.5">${app.position || 'General Application'}</p>
-              <p class="text-xs text-gray-400 mt-0.5">${new Date(app.createdAt).toLocaleString()}</p>
+
+        // Build job lookup
+        const jobMap = {};
+        jobs.forEach(j => { jobMap[j._id] = j; });
+
+        // Group by jobId
+        const groups = {};
+        data.items.forEach(app => {
+          const key = app.jobId || '_unassigned';
+          if (!groups[key]) groups[key] = [];
+          groups[key].push(app);
+        });
+
+        // Sort: most recent first, unassigned last
+        const sortedKeys = Object.keys(groups).sort((a, b) => {
+          if (a === '_unassigned') return 1;
+          if (b === '_unassigned') return -1;
+          const aTime = groups[a][0] ? groups[a][0].createdAt : '';
+          const bTime = groups[b][0] ? groups[b][0].createdAt : '';
+          return bTime.localeCompare(aTime);
+        });
+
+        el.innerHTML = sortedKeys.map(key => {
+          const job = jobMap[key];
+          const apps = groups[key];
+          const title = job ? job.title : 'General Applications';
+          const subtitle = job
+            ? [job.department, job.location, job.type].filter(Boolean).join(' \u2022 ')
+            : 'No specific job linked';
+          return `
+            <div class="app-folder open">
+              <div class="app-folder-header" onclick="toggleFolder(this)">
+                <div class="flex items-center gap-3">
+                  <i class="fas ${job ? 'fa-folder' : 'fa-folder-open'} app-folder-icon"></i>
+                  <div>
+                    <h4 class="font-semibold text-gray-900 text-sm">${title}</h4>
+                    <p class="text-xs text-gray-500">${subtitle}</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="app-folder-count">${apps.length}</span>
+                  <i class="fas fa-chevron-down app-folder-arrow"></i>
+                </div>
+              </div>
+              <div class="app-folder-content">
+                ${apps.map(app => `
+                  <div class="list-item">
+                    <div class="min-w-0 flex-1">
+                      <h4 class="font-semibold text-gray-900 text-sm">${app.name}</h4>
+                      <p class="text-xs text-gray-500 mt-0.5">
+                        <i class="fas fa-envelope text-[10px] mr-1"></i>${app.email}
+                        ${app.phone ? ' &bull; <i class="fas fa-phone text-[10px] mr-1"></i>' + app.phone : ''}
+                      </p>
+                      <p class="text-xs text-gray-400 mt-0.5">${new Date(app.createdAt).toLocaleString()}</p>
+                    </div>
+                    <div class="flex items-center gap-1 flex-shrink-0">
+                      <a href="${API_URL}${app.resumeUrl}" target="_blank" class="btn btn-primary btn-sm" title="Download Resume">
+                        <i class="fas fa-download"></i> Resume
+                      </a>
+                      <a href="mailto:${app.email}" class="btn btn-icon text-green" title="Email">
+                        <i class="fas fa-envelope text-xs"></i>
+                      </a>
+                      <button onclick="deleteApplication('${app._id}')" class="btn btn-icon text-red" title="Delete">
+                        <i class="fas fa-trash text-xs"></i>
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
             </div>
-            <div class="flex items-center gap-1 flex-shrink-0">
-              <a href="${API_URL}${app.resumeUrl}" target="_blank" class="btn btn-primary btn-sm" title="Download Resume">
-                <i class="fas fa-download"></i> Resume
-              </a>
-              <a href="mailto:${app.email}" class="btn btn-icon text-green" title="Email">
-                <i class="fas fa-envelope text-xs"></i>
-              </a>
-              <button onclick="deleteApplication('${app._id}')" class="btn btn-icon text-red" title="Delete">
-                <i class="fas fa-trash text-xs"></i>
-              </button>
-            </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       } catch (err) {
         document.getElementById('applicationsList').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load applications</p></div>';
       }
+    }
+
+    function toggleFolder(header) {
+      header.closest('.app-folder').classList.toggle('open');
     }
 
     async function deleteApplication(id) {
