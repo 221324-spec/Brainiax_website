@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -99,6 +100,8 @@ function App() {
       <ContactSidebar isOpen={isContactOpen} onClose={closeContact} />
       {/* Scroll to Top Button */}
       <ScrollToTop />
+      {/* Speed Insights */}
+      <SpeedInsights />
     </Router>
   )
 }
