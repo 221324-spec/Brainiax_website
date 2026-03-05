@@ -34,6 +34,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5000',
   'https://brainiaxitsolutions.vercel.app',
+  'https://www.brainiaxbpo.com',
+  'https://brainiaxbpo.com',
   process.env.CLIENT_ORIGIN
 ].filter(Boolean);
 
