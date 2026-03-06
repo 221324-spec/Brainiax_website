@@ -8,7 +8,6 @@ import irfanImg from '../assets/irfan.jpeg'
 import sirHassanImg from '../assets/sirhassan.jpeg'
 import talhaImg from '../assets/Talha.png'
 import talhaJuttImg from '../assets/talha_jutt.png'
-import usamaImg from '../assets/usama.jpg'
 import waseemImg from '../assets/Waseem.jpg'
 import junaidImg from '../assets/junaid.jpg'
 
@@ -17,15 +16,15 @@ const Team = () => {
   
   const leadership = [
     {
-      name: 'Chaudhry Hassan',
+      name: 'Hassan Ahmed',
       title: 'Project Manager',
       image: sirHassanImg,
       linkedin: '#',
       twitter: '#',
     },
     {
-      name: 'Talha Siddique',
-      title: 'Senior Managing Director',
+      name: 'Talha Siddiqui',
+      title: 'Operations Director',
       image: talhaImg,
       linkedin: '#',
       twitter: '#',
@@ -41,15 +40,8 @@ const Team = () => {
       twitter: '#',
     },
     {
-      name: 'Usama Khan',
-      title: 'IT Executive',
-      image: usamaImg,
-      linkedin: '#',
-      twitter: '#',
-    },
-    {
       name: 'Irfan Ali Mirza',
-      title: 'Full Stack Developer',
+      title: 'Web Developer & IT Administrator',
       image: irfanImg,
       linkedin: '#',
       twitter: '#',
