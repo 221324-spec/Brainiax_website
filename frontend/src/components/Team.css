@@ -31,7 +31,7 @@
 
 /* Leadership Grid */
 .team-leadership-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-8 max-w-4xl mx-auto;
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-8 max-w-2xl mx-auto;
 }
 
 /* Team Grid */

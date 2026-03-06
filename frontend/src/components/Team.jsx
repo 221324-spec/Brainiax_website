@@ -199,7 +199,7 @@ const Team = () => {
         </motion.div>
 
         {/* Leadership Row - CEO & Director */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-8 max-w-2xl mx-auto">
           {leadership.map((member, index) => (
             <TeamCard key={member.name} member={member} index={index} />
           ))}
