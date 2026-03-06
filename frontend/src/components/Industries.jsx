@@ -3,16 +3,32 @@ import {
   CreditCard, 
   ShoppingCart, 
   Stethoscope, 
-  Plane, 
+  Car, 
   Cpu,
-  GraduationCap,
-  Factory
+  Sun,
+  Factory,
+  Shield
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import './Industries.css'
 
 const Industries = () => {
   const industries = [
+    {
+      icon: Car,
+      name: 'MVA (Motor Vehicle Accidents)',
+      description: 'Accident claims, legal support, case management'
+    },
+    {
+      icon: Shield,
+      name: 'ACA (Affordable Care Act)',
+      description: 'Health insurance enrollment, policy support'
+    },
+    {
+      icon: Sun,
+      name: 'Solar Energy',
+      description: 'Solar leads, installation support, consultations'
+    },
     {
       icon: CreditCard,
       name: 'Banking & Finance',
@@ -32,21 +48,6 @@ const Industries = () => {
       icon: Cpu,
       name: 'Technology & SaaS',
       description: 'Technical support, onboarding assistance'
-    },
-    {
-      icon: Plane,
-      name: 'Travel & Airlines',
-      description: 'Reservations, cancellations, travel support'
-    },
-    {
-      icon: Building2,
-      name: 'Real Estate',
-      description: 'Lead qualification, property inquiries'
-    },
-    {
-      icon: GraduationCap,
-      name: 'Education',
-      description: 'Enrollment support, student services'
     },
     {
       icon: Factory,

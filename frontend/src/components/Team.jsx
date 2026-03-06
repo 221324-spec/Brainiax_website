@@ -16,14 +16,14 @@ const Team = () => {
   
   const leadership = [
     {
-      name: 'Hassan Ahmed',
+      name: 'MR. Hassan Ahmed',
       title: 'Project Manager',
       image: sirHassanImg,
       linkedin: '#',
       twitter: '#',
     },
     {
-      name: 'Talha Siddiqui',
+      name: 'MR. Talha Siddiqui',
       title: 'Operations Director',
       image: talhaImg,
       linkedin: '#',
@@ -33,28 +33,28 @@ const Team = () => {
 
   const teamMembers = [
     {
-      name: 'Talha Jutt',
+      name: 'MR. ABU Talha Jutt',
       title: 'HR Manager',
       image: talhaJuttImg,
       linkedin: '#',
       twitter: '#',
     },
     {
-      name: 'Irfan Ali Mirza',
+      name: 'MR. Irfan Ali Mirza',
       title: 'Web Developer & IT Administrator',
       image: irfanImg,
       linkedin: '#',
       twitter: '#',
     },
     {
-      name: 'Muhammad Waseem',
+      name: 'MR. Muhammad Waseem',
       title: 'QA Manager',
       image: waseemImg,
       linkedin: '#',
       twitter: '#',
     },
     {
-      name: 'Muhammad Junaid',
+      name: 'MR. Muhammad Junaid',
       title: 'Managing Director',
       image: junaidImg,
       linkedin: '#',
@@ -198,11 +198,12 @@ const Team = () => {
         </div>
 
         {/* Team Grid with Highlight Effect */}
-        <div className="relative max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+        <div className="relative max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
             {teamMembers.map((member, index) => (
               <motion.div
                 key={member.name}
+                className="w-full max-w-[250px]"
                 animate={{
                   scale: currentSlide === index ? 1.05 : 1,
                 }}

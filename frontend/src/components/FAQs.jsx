@@ -8,28 +8,36 @@ const FAQs = () => {
 
   const faqs = [
     {
-      question: "What services does Brainiax offer?",
-      answer: "Brainiax specializes in telemarketing and BPO solutions, including quality monitoring, outbound calls, appointment setting, and back office support. We provide 24/7 customer service excellence."
+      question: "What services does Brainiax specialize in?",
+      answer: "Brainiax specializes in BPO and telecommunication solutions with expertise in MVA (Motor Vehicle Accidents) campaigns, ACA (Affordable Care Act) health insurance enrollment, Solar energy lead generation, and comprehensive call center services including inbound/outbound calls, appointment setting, and customer support."
     },
     {
-      question: "How experienced is your team?",
-      answer: "Our team consists of experienced professionals with years of expertise in customer service, telemarketing, and business process outsourcing. We have successfully served numerous clients across various industries."
+      question: "What is your experience with MVA campaigns?",
+      answer: "We are currently focused on MVA (Motor Vehicle Accidents) campaigns, helping connect accident victims with legal professionals. Our trained agents handle sensitive calls with empathy, qualify leads efficiently, and ensure proper documentation for legal referrals."
+    },
+    {
+      question: "Do you have experience with ACA and Healthcare campaigns?",
+      answer: "Yes! We have extensive experience with ACA (Affordable Care Act) campaigns, helping individuals enroll in health insurance plans during open enrollment periods. Our team is trained in healthcare compliance and can assist with policy explanations, enrollment support, and follow-ups."
+    },
+    {
+      question: "What about Solar lead generation services?",
+      answer: "We've successfully managed Solar energy campaigns, generating qualified leads for solar installation companies. Our agents educate potential customers about solar benefits, assess eligibility, and schedule consultations with solar providers."
     },
     {
       question: "What industries do you serve?",
-      answer: "We serve a wide range of industries including healthcare, technology, finance, retail, and more. Our adaptable solutions can be customized to meet the specific needs of any industry."
+      answer: "We serve multiple industries including Legal (MVA/Personal Injury), Healthcare (ACA enrollment), Renewable Energy (Solar), Banking & Finance, E-Commerce, Technology/SaaS, and Telecommunications. Our adaptable solutions are customized to meet each industry's specific compliance and service requirements."
     },
     {
-      question: "How do you ensure quality in your services?",
-      answer: "Quality is our top priority. We implement rigorous training programs, continuous monitoring, and feedback systems to ensure the highest standards of service delivery."
+      question: "How do you ensure quality and compliance?",
+      answer: "Quality is our priority. We implement rigorous training programs, continuous call monitoring, TCPA compliance measures, and regular feedback sessions. All campaigns follow strict regulatory guidelines relevant to MVA, ACA, and other industries we serve."
     },
     {
       question: "What are your operating hours?",
-      answer: "We operate 24/7 to provide round-the-clock support to our clients and their customers, ensuring no queries go unanswered regardless of time zones."
+      answer: "We operate 24/7 to provide round-the-clock support. Our flexible shifts accommodate different time zones, ensuring your campaigns run efficiently regardless of when your customers need assistance."
     },
     {
       question: "How do I get started with Brainiax?",
-      answer: "Getting started is simple! Contact us through our website or give us a call. We'll discuss your requirements, provide a customized solution, and begin implementation promptly."
+      answer: "Getting started is easy! Contact us through our website or reach out directly. We'll discuss your campaign requirements (MVA, ACA, Solar, or other services), provide a customized solution, and begin onboarding your project promptly with trained agents ready to deliver results."
     }
   ]
 
