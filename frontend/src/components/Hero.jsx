@@ -29,23 +29,26 @@ const Hero = ({ onOpenContact }) => {
   }
 
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative flex items-center justify-center overflow-hidden" style={{ minHeight: '100vh', height: '118vh' }}>
       
       {/* ===== BACKGROUND IMAGE ===== */}
       <div className="absolute inset-0 z-0">
-        {/* Background Image - Replace with your own image */}
+        {/* Background Image - Professional modern office workspace */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`
+            backgroundImage: `url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center',
+            backgroundRepeat: 'no-repeat'
           }}
         />
         
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/50" />
         
         {/* Gradient Overlay for depth */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/40" />
       </div>
 
       {/* ===== HERO CONTENT - Centered ===== */}
@@ -54,6 +57,7 @@ const Hero = ({ onOpenContact }) => {
         {/* Main Headline with Typing Animation */}
         <motion.h1 
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-medium tracking-tight text-white mb-6 sm:mb-8"
+          style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.5)' }}
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -84,6 +88,7 @@ const Hero = ({ onOpenContact }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="text-base sm:text-lg md:text-xl text-white max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-4"
+          style={{ textShadow: '1px 1px 6px rgba(0,0,0,0.8), 0 0 15px rgba(0,0,0,0.5)' }}
         >
           Transforming customer interactions into meaningful connections. We empower businesses 
           with world-class Telecommunication solutions that drive growth, enhance satisfaction and deliver 

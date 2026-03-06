@@ -27,6 +27,7 @@
     line-height: 1.6;
     overflow-x: hidden;
     overscroll-behavior: none;
+    zoom: 0.85;
   }
 
   ::selection {
