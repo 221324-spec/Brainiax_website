@@ -8,7 +8,7 @@ import irfanImg from '../assets/irfan.jpeg'
 import sirHassanImg from '../assets/sirhassan.jpeg'
 import talhaImg from '../assets/Talha.png'
 import talhaJuttImg from '../assets/talha_jutt.png'
-import waseemImg from '../assets/Waseem.jpg'
+import waseemImg from '../assets/Waseem.png'
 import junaidImg from '../assets/junaid.jpg'
 
 const Team = () => {
@@ -19,15 +19,13 @@ const Team = () => {
       name: 'MR. Hassan Ahmed',
       title: 'Project Manager',
       image: sirHassanImg,
-      linkedin: '#',
-      twitter: '#',
+    
     },
     {
       name: 'MR. Talha Siddiqui',
       title: 'Operations Director',
       image: talhaImg,
-      linkedin: '#',
-      twitter: '#',
+      
     }
   ]
 
@@ -36,29 +34,25 @@ const Team = () => {
       name: 'MR. ABU Talha Jutt',
       title: 'HR Manager',
       image: talhaJuttImg,
-      linkedin: '#',
-      twitter: '#',
+      
     },
     {
       name: 'MR. Irfan Ali Mirza',
       title: 'Web Developer & IT Administrator',
       image: irfanImg,
-      linkedin: '#',
-      twitter: '#',
+     
     },
     {
       name: 'MR. Muhammad Waseem',
       title: 'QA Manager',
       image: waseemImg,
-      linkedin: '#',
-      twitter: '#',
+      
     },
     {
       name: 'MR. Muhammad Junaid',
       title: 'Managing Director',
       image: junaidImg,
-      linkedin: '#',
-      twitter: '#',
+    
     }
   ]
 
