@@ -67,19 +67,25 @@ const WhyChoose = () => {
 
   return (
     <section id="why-choose" className="relative py-24 overflow-hidden">
-      {/* Spinning Background Image */}
-      <motion.div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundImage: 'url(https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=2000&q=80)',
-        }}
-        animate={{ rotate: 360 }}
-        transition={{ 
-          duration: 120,
-          repeat: Infinity,
-          ease: "linear"
-        }}
-      />
+      {/* Spinning Background Image - Enlarged to cover viewport during rotation */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div 
+          className="absolute bg-cover bg-center bg-no-repeat"
+          style={{ 
+            backgroundImage: 'url(https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=2000&q=80)',
+            width: '150%',
+            height: '150%',
+            top: '-25%',
+            left: '-25%',
+          }}
+          animate={{ rotate: 360 }}
+          transition={{ 
+            duration: 120,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+      </div>
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/60" />
 
