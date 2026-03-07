@@ -7,7 +7,7 @@ import './Team.css'
 import irfanImg from '../assets/irfan.jpeg'
 import sirHassanImg from '../assets/sirhassan.jpeg'
 import talhaImg from '../assets/Talha.png'
-import talhaJuttImg from '../assets/talha_jutt.png'
+import talhaJuttImg from '../assets/talha_jutt.jpeg'
 import waseemImg from '../assets/Waseem.png'
 import junaidImg from '../assets/junaid.jpg'
 

@@ -109,7 +109,7 @@ const TermsOfService = () => {
               </p>
               <p className="text-gray-700">
                 Email: legal@brainiaxsolutions.com<br />
-                Phone: +92 300 1234567<br />
+                Phone: +92 317 6538007<br />
                 Address: Islamabad, Pakistan
               </p>
             </div>

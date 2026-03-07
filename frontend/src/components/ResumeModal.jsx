@@ -204,7 +204,7 @@ const ResumeModal = ({ isOpen, onClose, jobTitle = null, jobId = null }) => {
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl
                                text-gray-900 placeholder-gray-400 focus:outline-none 
                                focus:border-gray-400 focus:bg-white transition-all"
-                      placeholder="+92 300 1234567"
+                      placeholder="+92 317 6538007"
                     />
                   </div>
 
