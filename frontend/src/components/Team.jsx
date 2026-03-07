@@ -31,7 +31,7 @@ const Team = () => {
 
   const teamMembers = [
     {
-      name: 'MR. ABU Talha Jutt',
+      name: 'MR. ABU Talha ',
       title: 'HR Manager',
       image: talhaJuttImg,
       
