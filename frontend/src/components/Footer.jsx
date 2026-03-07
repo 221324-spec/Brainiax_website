@@ -177,7 +177,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm text-gray-400">
                 <MapPin className="w-4 h-4 text-gray-500" />
-                <span>Islamabad, Pakistan</span>
+                <span>Rawalpindi, Pakistan</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-gray-400">
                 <Phone className="w-4 h-4 text-gray-500" />
