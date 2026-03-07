@@ -37,7 +37,7 @@ const Team = () => {
       
     },
     {
-      name: 'MR. Irfan Ali Mirza',
+      name: 'MR. Irfan Ali ',
       title: 'Web Developer & IT Administrator',
       image: irfanImg,
      
