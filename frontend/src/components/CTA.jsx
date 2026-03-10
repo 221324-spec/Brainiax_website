@@ -1,13 +1,12 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, Mail, Calendar, Linkedin, Twitter, Facebook, Instagram } from 'lucide-react'
+import { ArrowRight, Mail, Calendar, Linkedin, Facebook, Instagram } from 'lucide-react'
 import './CTA.css'
 
 const CTA = ({ onOpenContact }) => {
   const socialLinks = [
-    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/brainiax' },
-    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/brainiax' },
-    { name: 'Facebook', icon: Facebook, href: 'https://facebook.com/brainiax' },
-    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/brainiax' }
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/company/brainiax-it-solutions/' },
+    { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/brainiaxbpo' },
+    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/brainiax_2.0?igsh=MTJ3cm02ZzA2aDljdw==' }
   ]
 
   return (

@@ -1,6 +1,7 @@
 import { 
   Linkedin, 
-  Twitter, 
+  Facebook,
+  Instagram,
   Mail, 
   MapPin, 
   Phone,
@@ -69,8 +70,9 @@ const Footer = () => {
   }
 
   const socialLinks = [
-    { name: 'LinkedIn', icon: Linkedin, href: '#' },
-    { name: 'Twitter', icon: Twitter, href: '#' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/company/brainiax-it-solutions/' },
+    { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/brainiaxbpo' },
+    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/brainiax_2.0?igsh=MTJ3cm02ZzA2aDljdw==' },
     { name: 'Email', icon: Mail, href: 'mailto:contact@brainiax.com' }
   ]
 
