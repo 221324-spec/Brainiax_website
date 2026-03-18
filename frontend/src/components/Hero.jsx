@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import './Hero.css'
+import IMG1 from '../assets/IMG1.jpeg'
 
 const Hero = ({ onOpenContact }) => {
   
@@ -37,7 +38,8 @@ const Hero = ({ onOpenContact }) => {
         <div 
           className="absolute inset-0"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+            // backgroundImage: `url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+            backgroundImage: `url(${IMG1})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center center',
             backgroundRepeat: 'no-repeat'
@@ -45,7 +47,7 @@ const Hero = ({ onOpenContact }) => {
         />
         
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-black/30" />
         
         {/* Gradient Overlay for depth */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/40" />
