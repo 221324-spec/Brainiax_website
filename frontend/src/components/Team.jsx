@@ -9,7 +9,7 @@ import sirHassanImg from '../assets/sirhassan.jpeg'
 import talhaImg from '../assets/Talha.png'
 import talhaJuttImg from '../assets/talha_jutt.jpeg'
 import waseemImg from '../assets/Waseem.png'
-import junaidImg from '../assets/junaid.jpg'
+import junaidImg from '../assets/junaid.jpeg'
 
 const Team = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
