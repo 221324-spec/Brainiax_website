@@ -16,6 +16,7 @@ import ScrollToTop from './components/ScrollToTop'
 import HiringPage from './pages/HiringPage'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
+import LetterVerification from './pages/LetterVerification'
 import { HIRING_CONFIG } from './config/hiring'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
@@ -72,6 +73,7 @@ function AppContent({ openContact }) {
         <Route path="/hiring" element={<HiringPage />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/letter-verification" element={<LetterVerification />} />
       </Routes>
     </div>
   )

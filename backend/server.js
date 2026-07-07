@@ -12,6 +12,7 @@ const bcrypt = require('bcryptjs')
 const jobsRouter = require('./src/routes/jobs')
 const contactsRouter = require('./src/routes/contacts')
 const resumesRouter = require('./src/routes/resumes')
+const lettersRouter = require('./src/routes/letters')
 const adminRouter = require('./src/routes/admin')
 
 const app = express()
@@ -30,6 +31,7 @@ app.use(express.json())
 
 // CORS configuration - allow multiple origins
 const allowedOrigins = [
+  'http://localhost:3000',
   'http://localhost:3002',
   'http://localhost:5173',
   'http://localhost:5000',
@@ -129,6 +131,7 @@ async function setupFrontendMiddleware() {
 app.use('/api/jobs', jobsRouter)
 app.use('/api/contacts', contactsRouter)
 app.use('/api/resumes', resumesRouter)
+app.use('/api/letters', lettersRouter)
 app.use('/api/admin', adminRouter)
 
 // Health check endpoint for deployment verification

@@ -61,7 +61,8 @@ const Footer = () => {
     resources: [
       { name: 'Industries', href: '#industries' },
       { name: 'Why Choose Us', href: '#why-choose' },
-      { name: 'FAQs', href: '#faqs' }
+      { name: 'FAQs', href: '#faqs' },
+      { name: 'Letter Verification', href: '/letter-verification', isRoute: true }
     ],
     legal: [
       { name: 'Privacy Policy', href: '/privacy-policy' },
@@ -253,12 +254,21 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.resources.map((link) => (
                 <li key={link.name}>
-                  <a 
-                    href={link.href}
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </a>
+                  {link.isRoute ? (
+                    <Link 
+                      to={link.href}
+                      className="text-sm text-gray-400 hover:text-white transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  ) : (
+                    <a 
+                      href={link.href}
+                      className="text-sm text-gray-400 hover:text-white transition-colors"
+                    >
+                      {link.name}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>

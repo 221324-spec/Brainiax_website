@@ -138,6 +138,10 @@
               <i class="fas fa-envelope"></i> Contacts
               <span id="tabBadgeContacts" class="tab-badge bg-purple-100 text-purple-700">-</span>
             </button>
+            <button onclick="showTab('letters')" id="tabLetters" class="tab-btn">
+              <i class="fas fa-certificate"></i> Letters
+              <span id="tabBadgeLetters" class="tab-badge bg-amber-100 text-amber-700">-</span>
+            </button>
           </div>
 
           <!-- Section panels (scrollable) -->
@@ -173,6 +177,33 @@
             </div>
             <div id="contactsList" class="space-y-3">
               <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading contacts...</p></div>
+            </div>
+          </div>
+
+          <!-- LETTERS panel -->
+          <div id="panelLetters" class="section-panel hidden">
+            <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+              <h2 class="text-lg font-bold text-gray-900">Letter Verification Records</h2>
+              <button onclick="openLetterModal()" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add Record
+              </button>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <input type="text" id="letterSearch" oninput="debounceLoadLetters()" placeholder="Search code or employee name..."
+                     class="form-input" style="max-width:280px">
+              <select id="letterTypeFilter" onchange="loadLetters()" class="form-input" style="max-width:160px">
+                <option value="">All Types</option>
+                <option value="Offer">Offer</option>
+                <option value="Experience">Experience</option>
+              </select>
+              <select id="letterStatusFilter" onchange="loadLetters()" class="form-input" style="max-width:160px">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Revoked">Revoked</option>
+              </select>
+            </div>
+            <div id="lettersList" class="space-y-3">
+              <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading records...</p></div>
             </div>
           </div>
           </div><!-- end panels-container -->
@@ -250,6 +281,74 @@
     </div>
   </div>
 
+  <!-- ====== LETTER MODAL ====== -->
+  <div id="letterModal" class="modal">
+    <div class="modal-backdrop" onclick="closeLetterModal()"></div>
+    <div class="modal-content max-w-2xl">
+      <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+        <h3 id="letterModalTitle" class="text-lg font-bold text-gray-900">Add Verification Record</h3>
+        <button onclick="closeLetterModal()" class="btn btn-icon text-red">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form onsubmit="saveLetter(event)" class="p-6 space-y-4">
+        <input type="hidden" id="letterId">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">Verification Code *</label>
+            <input type="text" id="letterCode" required class="form-input uppercase" placeholder="e.g. BRX-2026-00123" style="text-transform:uppercase">
+          </div>
+          <div>
+            <label class="form-label">Letter Type *</label>
+            <select id="letterType" required class="form-input">
+              <option value="Offer">Offer Letter</option>
+              <option value="Experience">Experience Letter</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Employee Name *</label>
+          <input type="text" id="letterEmployeeName" required class="form-input" placeholder="e.g. Ali Khan">
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">Designation *</label>
+            <input type="text" id="letterDesignation" required class="form-input" placeholder="e.g. Software Engineer">
+          </div>
+          <div>
+            <label class="form-label">Department *</label>
+            <input type="text" id="letterDepartment" required class="form-input" placeholder="e.g. Engineering">
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">Issue Date *</label>
+            <input type="date" id="letterIssueDate" required class="form-input">
+          </div>
+          <div>
+            <label class="form-label">Joining Date (optional)</label>
+            <input type="date" id="letterJoiningDate" class="form-input">
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Status</label>
+          <select id="letterStatus" class="form-input">
+            <option value="Active">Active</option>
+            <option value="Revoked">Revoked</option>
+          </select>
+        </div>
+        <div class="flex gap-3 pt-4 border-t border-gray-100">
+          <button type="submit" class="btn btn-primary flex-1 justify-center py-3">
+            <i class="fas fa-save"></i> Save Record
+          </button>
+          <button type="button" onclick="closeLetterModal()" class="btn btn-outline px-6 py-3">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ====== DETAIL MODAL ====== -->
   <div id="detailModal" class="modal">
     <div class="modal-backdrop" onclick="closeDetailModal()"></div>
@@ -284,7 +383,12 @@
     /* ============ API URL setup ============ */
     function setupApiUrl() {
       const envApiUrl = '__VITE_API_BASE_URL__';
-      if (envApiUrl && envApiUrl !== '__VITE_API_BASE_URL__') {
+      // When the admin panel itself is opened from localhost, always target the
+      // local backend. This never triggers on the deployed site, so no need to
+      // revert before deployment.
+      if (['localhost', '127.0.0.1'].includes(location.hostname)) {
+        API_URL = 'http://localhost:5000';
+      } else if (envApiUrl && envApiUrl !== '__VITE_API_BASE_URL__') {
         API_URL = envApiUrl;
       } else if (localStorage.getItem('apiUrl')) {
         API_URL = localStorage.getItem('apiUrl');
@@ -346,7 +450,10 @@
       const t = localStorage.getItem('jwtToken');
       const u = localStorage.getItem('apiUrl');
       if (t && u) {
-        JWT_TOKEN = t; API_URL = u;
+        JWT_TOKEN = t;
+        // Keep the localhost API_URL from setupApiUrl when running locally;
+        // otherwise restore the saved backend URL.
+        if (!['localhost', '127.0.0.1'].includes(location.hostname)) API_URL = u;
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
         document.getElementById('currentApiUrl').textContent = API_URL;
@@ -385,6 +492,7 @@
         loadJobs();
         loadApplications();
         loadContacts();
+        loadLetters();
       } catch (err) {
         showToast('Failed to load dashboard', 'error');
       }
@@ -392,7 +500,7 @@
 
     /* ============ TABS ============ */
     function showTab(tab) {
-      ['Jobs', 'Applications', 'Contacts'].forEach(t => {
+      ['Jobs', 'Applications', 'Contacts', 'Letters'].forEach(t => {
         document.getElementById('tab' + t).classList.remove('tab-active');
         document.getElementById('panel' + t).classList.add('hidden');
       });
@@ -679,6 +787,147 @@
     }
 
     function closeDetailModal() { document.getElementById('detailModal').classList.remove('active'); }
+
+    /* ============ LETTER VERIFICATIONS ============ */
+    let letterSearchTimer;
+    function debounceLoadLetters() {
+      clearTimeout(letterSearchTimer);
+      letterSearchTimer = setTimeout(loadLetters, 350);
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    async function loadLetters() {
+      try {
+        const params = new URLSearchParams();
+        const search = document.getElementById('letterSearch').value.trim();
+        const type = document.getElementById('letterTypeFilter').value;
+        const status = document.getElementById('letterStatusFilter').value;
+        if (search) params.set('search', search);
+        if (type) params.set('type', type);
+        if (status) params.set('status', status);
+        const letters = await api('/api/admin/letters' + (params.toString() ? '?' + params.toString() : ''));
+        document.getElementById('tabBadgeLetters').textContent = letters.length;
+        const el = document.getElementById('lettersList');
+        if (!letters.length) {
+          el.innerHTML = '<div class="empty-state"><i class="fas fa-certificate"></i><p>No verification records found. Click "Add Record" to create one.</p></div>';
+          return;
+        }
+        el.innerHTML = letters.map(l => `
+          <div class="list-item ${l.status === 'Revoked' ? 'inactive' : ''}">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h4 class="font-semibold text-gray-900 text-sm">${escapeHtml(l.employee_name)}</h4>
+                <span class="badge ${l.letter_type === 'Offer' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}">
+                  ${l.letter_type} Letter
+                </span>
+                <span class="badge ${l.status === 'Active' ? 'badge-active' : 'badge-inactive'}">
+                  ${l.status}
+                </span>
+              </div>
+              <p class="text-xs text-gray-500 mt-1">
+                <i class="fas fa-key text-[10px] mr-1"></i><span class="font-mono">${escapeHtml(l.verification_code)}</span>
+                &bull; ${escapeHtml(l.designation)} &bull; ${escapeHtml(l.department)}
+              </p>
+              <p class="text-xs text-gray-400 mt-0.5">
+                Issued ${new Date(l.issue_date).toLocaleDateString()}
+                ${l.joining_date ? ' &bull; Joining ' + new Date(l.joining_date).toLocaleDateString() : ''}
+              </p>
+            </div>
+            <div class="flex items-center gap-1 flex-shrink-0">
+              <button onclick="toggleLetterStatus('${l._id}', '${l.status}')" class="btn btn-icon ${l.status === 'Active' ? 'text-red' : 'text-green'}"
+                      title="${l.status === 'Active' ? 'Revoke' : 'Restore'}">
+                <i class="fas ${l.status === 'Active' ? 'fa-ban' : 'fa-rotate-left'} text-xs"></i>
+              </button>
+              <button onclick="editLetter('${l._id}')" class="btn btn-icon text-blue" title="Edit">
+                <i class="fas fa-pen text-xs"></i>
+              </button>
+              <button onclick="deleteLetter('${l._id}')" class="btn btn-icon text-red" title="Delete">
+                <i class="fas fa-trash text-xs"></i>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        document.getElementById('lettersList').innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load records</p></div>';
+      }
+    }
+
+    function openLetterModal(letter = null) {
+      document.getElementById('letterModalTitle').textContent = letter ? 'Edit Verification Record' : 'Add Verification Record';
+      document.getElementById('letterId').value = letter?._id || '';
+      document.getElementById('letterCode').value = letter?.verification_code || '';
+      document.getElementById('letterType').value = letter?.letter_type || 'Offer';
+      document.getElementById('letterEmployeeName').value = letter?.employee_name || '';
+      document.getElementById('letterDesignation').value = letter?.designation || '';
+      document.getElementById('letterDepartment').value = letter?.department || '';
+      document.getElementById('letterIssueDate').value = letter?.issue_date ? letter.issue_date.slice(0, 10) : '';
+      document.getElementById('letterJoiningDate').value = letter?.joining_date ? letter.joining_date.slice(0, 10) : '';
+      document.getElementById('letterStatus').value = letter?.status || 'Active';
+      document.getElementById('letterModal').classList.add('active');
+    }
+    function closeLetterModal() { document.getElementById('letterModal').classList.remove('active'); }
+
+    async function editLetter(id) {
+      try {
+        const letter = await api('/api/letters/' + id);
+        openLetterModal(letter);
+      } catch (err) {
+        showToast('Failed to load record', 'error');
+      }
+    }
+
+    async function saveLetter(e) {
+      e.preventDefault();
+      const id = document.getElementById('letterId').value;
+      const data = {
+        verification_code: document.getElementById('letterCode').value.trim().toUpperCase(),
+        letter_type: document.getElementById('letterType').value,
+        employee_name: document.getElementById('letterEmployeeName').value.trim(),
+        designation: document.getElementById('letterDesignation').value.trim(),
+        department: document.getElementById('letterDepartment').value.trim(),
+        issue_date: document.getElementById('letterIssueDate').value,
+        joining_date: document.getElementById('letterJoiningDate').value || null,
+        status: document.getElementById('letterStatus').value
+      };
+      try {
+        if (id) { await api('/api/letters/' + id, 'PUT', data); }
+        else    { await api('/api/letters', 'POST', data); }
+        closeLetterModal();
+        showToast(id ? 'Record updated!' : 'Record created!');
+        loadLetters();
+      } catch (err) {
+        const msg = err.message.includes('409') ? 'This verification code already exists' : err.message;
+        showToast('Failed to save record: ' + msg, 'error');
+      }
+    }
+
+    async function toggleLetterStatus(id, currentStatus) {
+      const revoking = currentStatus === 'Active';
+      if (!confirm(revoking
+        ? 'Revoke this letter? It will fail public verification.'
+        : 'Restore this letter to Active status?')) return;
+      try {
+        await api('/api/letters/' + id, 'PUT', { status: revoking ? 'Revoked' : 'Active' });
+        showToast(revoking ? 'Letter revoked' : 'Letter restored');
+        loadLetters();
+      } catch (err) {
+        showToast('Failed to update status', 'error');
+      }
+    }
+
+    async function deleteLetter(id) {
+      if (!confirm('Delete this verification record permanently?')) return;
+      try {
+        await api('/api/letters/' + id, 'DELETE');
+        showToast('Record deleted');
+        loadLetters();
+      } catch (err) {
+        showToast('Failed to delete record', 'error');
+      }
+    }
 
     /* ============ REALTIME ============ */
     let sse, poller;

@@ -5,6 +5,7 @@ const Contact = require('../models/Contact')
 const Job = require('../models/Job')
 const AdminUser = require('../models/AdminUser')
 const Setting = require('../models/Setting')
+const LetterVerification = require('../models/LetterVerification')
 const adminAuth = require('../middleware/adminAuth')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
@@ -151,6 +152,29 @@ router.get('/jobs', adminAuth, async (req, res) => {
   try {
     const jobs = await Job.find().sort({ postedDate: -1 })
     res.json(jobs)
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' })
+  }
+})
+
+// ============ LETTER VERIFICATIONS ============
+
+// GET /api/admin/letters - list all verification records (protected)
+router.get('/letters', adminAuth, async (req, res) => {
+  try {
+    const query = {}
+    if (req.query.type && ['Offer', 'Experience'].includes(req.query.type)) {
+      query.letter_type = req.query.type
+    }
+    if (req.query.status && ['Active', 'Revoked'].includes(req.query.status)) {
+      query.status = req.query.status
+    }
+    if (req.query.search) {
+      const rx = new RegExp(req.query.search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+      query.$or = [{ verification_code: rx }, { employee_name: rx }]
+    }
+    const letters = await LetterVerification.find(query).sort({ createdAt: -1 })
+    res.json(letters)
   } catch (err) {
     res.status(500).json({ message: 'Server error' })
   }
