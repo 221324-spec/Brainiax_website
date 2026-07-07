@@ -46,6 +46,11 @@ function AppContent({ openContact }) {
   const isHomePage = location.pathname === '/'
   const [isHiringOpen, setIsHiringOpen] = useState(false)
 
+  // Scroll to top whenever the route changes (e.g. footer links)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }, [location.pathname])
+
   useEffect(() => {
     fetch(`${API_BASE}/api/admin/settings/hiringBannerEnabled`)
       .then(res => res.json())
